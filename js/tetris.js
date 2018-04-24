@@ -6,11 +6,10 @@ function Tetris(){
 	scope.glass = [];
 	var state = "inactive";
 	var is_paused = false;
-	var figure_current;
+	scope.figure_current = {};
 	var fall_delta = 700;
 	var score = 0;
 	var figures = {};
-	var current = {};
 	var current_x, current_y;
 
 	scope.GLASS_WIDTH = 10;
@@ -49,8 +48,6 @@ function Tetris(){
 			};
 		}
 		console.log("binded figures", figures);
-		createFigure();
-		console.log(current.form[0], current_x, current_y);
 	}
 
 	scope.startGame = function(){
@@ -71,6 +68,11 @@ function Tetris(){
 		//listeners buttons
 		window.addEventListener("keydown", onKeyDown);
 		window.addEventListener("keyup", onKeyUp);
+		createFigure();
+		console.log(scope.figure_current.form[0]);
+		figureToGlass();
+		createFigure();
+		//moveFigure();
 		//game cicle start
 	}
 
@@ -84,6 +86,16 @@ function Tetris(){
 
 	scope.getScore = function(){
 		return score;
+	}
+
+	scope.isActionActive = function( action ){
+
+		for (var code in pressed_keys) {
+			if (pressed_keys[code].pressed && pressed_keys[code].action == action){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	function onKeyDown( event ){
@@ -124,24 +136,37 @@ function Tetris(){
 
 		var keys = Object.keys(figures);
 		//Choose random figure
-		current = figures[keys[Math.floor( Math.random() * keys.length)]];
-		//set start coordinates
-		current_x = Math.floor(scope.GLASS_WIDTH / 2);
-		current_y = 0;
+		scope.figure_current = {
+			form : figures[keys[Math.floor( Math.random() * keys.length)]].form,
+			//set start coordinates
+			current_x : Math.floor(scope.GLASS_WIDTH / 2),
+			current_y : 0,
+			//phase
+			phase : 0
+		}
 		//delata for
 
 	}
 
 	function moveFigure( x, y, phase ){
-		current_y++;
+			
 	}
 
 	function dropFigure(){
-
+		
 	}
 
 	function figureToGlass(){
 
+		var _current = scope.figure_current.form[scope.figure_current.phase]
+		for (var i = 0; i < _current.length; i++){
+			for (var j = 0; j < _current[i].length; j++){
+				if (_current[i][j])
+				{
+					scope.glass[i + scope.figure_current.current_y][j + scope.figure_current.current_x] = scope.figure_current.form[0][i][j];
+				}
+			}
+		}
 	}
 
 	function checkFilledRows(){
