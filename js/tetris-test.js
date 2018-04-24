@@ -1,5 +1,14 @@
 var tetris = new Tetris();
 
+tetris.bindButtons (
+	{
+		37: "left",
+		39: "right",
+		40: "speed-up",
+		38: "rotate", 
+		32: "instant"
+	}
+);
 tetris.bindFigures(
 	{
 		"z":{
@@ -19,6 +28,9 @@ tetris.bindFigures(
 		},
 		"o":{
 			form:"1,1;1,1"
+		},
+		"t":{
+			form:"0,1,0;1,1,1"
 		}
 	}
 );
@@ -60,11 +72,41 @@ window.onload = function(){
 
 	}
 	drawBoard();
-	//setInterval( drawBoard, 30 )
-	
+	//setInterval( drawBoard, 30 )	
 }
 
+window.addEventListener( "onkeydown", onActionActivated );
+window.addEventListener( "onkeyup", onActionDeactivated );
 
+function onActionActivated(e) {
+	
+	console.log("onActionActivated", e.detail.action );
+
+	switch(e.detail.action){
+		case "left":
+		
+			break;
+		case "right":
+
+			break;
+		case "speed-up":
+
+			break;
+		case "rotate":
+
+			break;
+		case "instant":
+			
+			break;
+	}
+
+}
+
+function onActionDeactivated(e) {
+	
+	console.log("onActionDectivated", e.detail.action );
+
+}
 setInterval( gameStep, 40);
 function gameStep(){
 

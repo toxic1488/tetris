@@ -2,7 +2,7 @@ function Tetris(){
 
 	var scope = this;
 
-	var pressed_keys;
+	var pressed_keys = {};
 	scope.glass = [];
 	var state = "inactive";
 	var is_paused = false;
@@ -10,10 +10,24 @@ function Tetris(){
 	var fall_delta = 700;
 	var score = 0;
 	var figures = {};
+	var current = {};
+	var current_x, current_y;
 
 	scope.GLASS_WIDTH = 10;
 	scope.GLASS_HEIGHT = 20;
 
+
+	scope.bindButtons = function( buttons_to_bind ){
+
+		for (var button in buttons_to_bind){
+			pressed_keys[button] = {
+				action: buttons_to_bind[button],
+				pressed: false
+			};
+		}
+		console.log("binded buttons", pressed_keys);
+
+	}
 	scope.bindFigures = function( figures_to_bind ){
 
 		for (var figure in figures_to_bind){
@@ -34,8 +48,9 @@ function Tetris(){
 				form: array_of_figures
 			};
 		}
-
 		console.log("binded figures", figures);
+		createFigure();
+		console.log(current.form[0], current_x, current_y);
 	}
 
 	scope.startGame = function(){
@@ -54,7 +69,8 @@ function Tetris(){
 		//reset visual
 
 		//listeners buttons
-
+		window.addEventListener("keydown", onKeyDown);
+		window.addEventListener("keyup", onKeyUp);
 		//game cicle start
 	}
 
@@ -71,19 +87,53 @@ function Tetris(){
 	}
 
 	function onKeyDown( event ){
+		for (var code in pressed_keys){
 
+			if (event.keyCode == code){
+				pressed_keys[code].pressed = true;
+
+				var key_event = new CustomEvent("onkeydown", {
+					detail: {
+						action: pressed_keys[code].action
+						}
+					});
+
+				window.dispatchEvent( key_event );
+			}
+		}
 	}
 
 	function onKeyUp( event ){
+		for (var code in pressed_keys){
 
+			if (event.keyCode == code){
+				pressed_keys[code].pressed = false;
+
+				var key_event = new CustomEvent("onkeyup", {
+					detail: {
+						action: pressed_keys[code].action
+						}
+					});
+
+				window.dispatchEvent( key_event );
+			}
+		}
 	}
 
 	function createFigure(){
 
+		var keys = Object.keys(figures);
+		//Choose random figure
+		current = figures[keys[Math.floor( Math.random() * keys.length)]];
+		//set start coordinates
+		current_x = Math.floor(scope.GLASS_WIDTH / 2);
+		current_y = 0;
+		//delata for
+
 	}
 
-	function moveFigure( x, y ){
-
+	function moveFigure( x, y, phase ){
+		current_y++;
 	}
 
 	function dropFigure(){
