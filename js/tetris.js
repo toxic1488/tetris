@@ -55,13 +55,13 @@ function Tetris(){
 		state = "playing";
 		score = 0;
 		//reset glass
-		for (var i = 0; i < scope.GLASS_HEIGHT; i++) {
+		for (var i = 0; i < scope.GLASS_WIDTH; i++) {
 			scope.glass[i] = [];
-			for (var j = 0; j < scope.GLASS_WIDTH; j++) {
+			for (var j = 0; j < scope.GLASS_HEIGHT; j++) {
 				scope.glass[i][j] = 0;
 			}
 		}
-		console.log(scope.glass);
+		//console.log(scope.glass);
 
 		//reset visual
 
@@ -69,9 +69,16 @@ function Tetris(){
 		window.addEventListener("keydown", onKeyDown);
 		window.addEventListener("keyup", onKeyUp);
 		createFigure();
-		console.log(scope.figure_current.form[0]);
-		figureToGlass();
-		createFigure();
+		console.log(scope.figure_current.form);
+		//figureToGlass();
+		dropFigure();
+		dropFigure();
+		// dropFigure();
+		// dropFigure();
+		// dropFigure();
+		// dropFigure();
+		// dropFigure();
+		//createFigure();
 		//moveFigure();
 		//game cicle start
 	}
@@ -139,8 +146,8 @@ function Tetris(){
 		scope.figure_current = {
 			form : figures[keys[Math.floor( Math.random() * keys.length)]].form,
 			//set start coordinates
-			current_x : Math.floor(scope.GLASS_WIDTH / 2),
-			current_y : 0,
+			x : Math.floor(scope.GLASS_WIDTH / 2) - 1,
+			y : 0,
 			//phase
 			phase : 0
 		}
@@ -153,20 +160,46 @@ function Tetris(){
 	}
 
 	function dropFigure(){
-		
+
+		//var is_possible = true;
+		while(true){
+
+			var _current = scope.figure_current;
+			var _form = _current.form[_current.phase];
+			for (var i = 0; i < _form.length; i++){
+				for (var j = 0; j < _form[i].length; j++){
+					if (_form[i][j] == 1)
+					{
+						if(scope.glass[i + _current.x][j + _current.y + 1] != 0){
+							figureToGlass();
+							console.log(scope.glass);
+							return;
+						}
+					}
+				}
+			}
+
+			scope.figure_current.y++;	
+		}
+
 	}
 
 	function figureToGlass(){
 
-		var _current = scope.figure_current.form[scope.figure_current.phase]
-		for (var i = 0; i < _current.length; i++){
-			for (var j = 0; j < _current[i].length; j++){
-				if (_current[i][j])
+		var _current = scope.figure_current;
+		var _form = _current.form[_current.phase];
+
+		for (var i = 0; i < _form.length; i++){
+
+			for (var j = 0; j < _form[i].length; j++){
+				if (_form[i][j])
 				{
-					scope.glass[i + scope.figure_current.current_y][j + scope.figure_current.current_x] = scope.figure_current.form[0][i][j];
+					scope.glass[i + _current.x][j + _current.y] = parseInt(_form[i][j])||scope.glass[i + _current.x][j + _current.y];
 				}
 			}
 		}
+		checkFilledRows();
+		createFigure();
 	}
 
 	function checkFilledRows(){
