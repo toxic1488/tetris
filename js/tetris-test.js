@@ -24,100 +24,43 @@ tetris.bindFigures(
 
 tetris.startGame();
 
-var canvas = document.createElement('canvas');
-var ctx = canvas.getContext('2d');
-canvas.height = 400;
-canvas.width = 200;
-columns = tetris.GLASS_WIDTH
-rows = tetris.GLASS_HEIGHT
-var block_w = canvas.width / columns;
-var block_h = canvas.height / rows;
+// window.addEventListener( "onkeydown", onActionActivated );
+// window.addEventListener( "onkeyup", onActionDeactivated );
 
-function drawBlock( x, y){
-	ctx.fillRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
-	ctx.strokeRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
-}
-
-function drawBoard(){
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.strokeStyle = 'black';
-
-	for (var x = 0; x < columns; ++x) {
-		for (var y = 0; y < rows; ++y) {
-			//console.log(tetris.glass[y][x]);
-			if (tetris.glass[x][y] == 0){
-				ctx.fillStyle = 'white';
-				drawBlock(x, y);
-			}
-			if(tetris.glass[x][y] == 1){
-				ctx.fillStyle = 'gray';
-				drawBlock(x, y);
-			}
-		}
-	}
-
-}
-
-function drawMovingBlock(){
-		for (var i = 0; i < tetris.figure_current.form[tetris.figure_current.phase].length; i++){
-			for (var j = 0; j < tetris.figure_current.form[tetris.figure_current.phase][i].length; j++){
-				if (tetris.figure_current.form[tetris.figure_current.phase][i][j] == 1)
-				{
-					ctx.fillStyle = 'blue';
-					drawBlock(tetris.figure_current.x + i, tetris.figure_current.y + j);
-				}
-			}
-		}
-	//tetris.figure_current.y++;
-
-}
-
-window.onload = function(){
-
-	document.body.appendChild(canvas);
+// function onActionActivated(e) {
 	
-	drawBoard();
-	//setInterval( drawBoard, 30 )	
-}
+// 	console.log("onActionActivated", e.detail.action );
 
-window.addEventListener( "onkeydown", onActionActivated );
-window.addEventListener( "onkeyup", onActionDeactivated );
+// 	switch(e.detail.action){
+// 		case "left":
 
-function onActionActivated(e) {
+// 			break;
+// 		case "right":
+
+// 			break;
+// 		case "speed-up":
+
+// 			break;
+// 		case "rotate":
+
+// 			break;
+// 		case "instant":
+
+// 			break;
+// 	}
+
+// }
+
+// function onActionDeactivated(e) {
 	
-	console.log("onActionActivated", e.detail.action );
+// 	console.log("onActionDectivated", e.detail.action );
 
-	switch(e.detail.action){
-		case "left":
-
-			break;
-		case "right":
-
-			break;
-		case "speed-up":
-
-			break;
-		case "rotate":
-
-			break;
-		case "instant":
-
-			break;
-	}
-
-}
-
-function onActionDeactivated(e) {
-	
-	console.log("onActionDectivated", e.detail.action );
-
-}
-setInterval( gameStep, 640);
-function gameStep(){
-	if( tetris.isActionActive("left") ){
-		console.log("aa");
-	}
-	drawBoard();
-	drawMovingBlock();
-}
+// }
+// setInterval( gameStep, 640);
+// function gameStep(){
+// 	if( tetris.isActionActive("left") ){
+// 		console.log("aa");
+// 	}
+// 	//drawBoard();
+// 	//drawMovingBlock();
+// }

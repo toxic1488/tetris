@@ -3,17 +3,73 @@ function Tetris(){
 	var scope = this;
 
 	var pressed_keys = {};
-	scope.glass = [];
+	var glass = [];
 	var state = "inactive";
 	var is_paused = false;
-	scope.figure_current = {};
+	var figure_current = {};
 	var fall_delta = 700;
 	var score = 0;
 	var figures = {};
 	var current_x, current_y;
 
-	scope.GLASS_WIDTH = 10;
-	scope.GLASS_HEIGHT = 20;
+	scope.GLASS_WIDTH = 10;//columns
+	scope.GLASS_HEIGHT = 20;//rows
+
+
+	//VISUAL
+	var canvas = document.createElement('canvas');
+	var ctx = canvas.getContext('2d');
+	canvas.height = 400;
+	canvas.width = 200;
+	var block_w = canvas.width / scope.GLASS_WIDTH;
+	var block_h = canvas.height / scope.GLASS_HEIGHT;
+
+	function drawBlock( x, y){
+		ctx.fillRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
+		ctx.strokeRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
+	}
+
+	function drawBoard(){
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.strokeStyle = 'black';
+
+		for (var x = 0; x < scope.GLASS_WIDTH; ++x) {
+			for (var y = 0; y < scope.GLASS_HEIGHT; ++y) {
+				//console.log(tetris.glass[y][x]);
+				if (glass[x][y] == 0){
+					ctx.fillStyle = 'white';
+					drawBlock(x, y);
+				}
+				if(glass[x][y] == 1){
+					ctx.fillStyle = 'gray';
+					drawBlock(x, y);
+				}
+			}
+		}
+
+	}
+
+	function drawMovingBlock(){
+			for (var i = 0; i < figure_current.form[figure_current.phase].length; i++){
+				for (var j = 0; j < figure_current.form[figure_current.phase][i].length; j++){
+					if (figure_current.form[figure_current.phase][i][j] == 1)
+					{
+						ctx.fillStyle = 'blue';
+						drawBlock(figure_current.x + i, figure_current.y + j);
+					}
+				}
+			}
+		//tetris.figure_current.y++;
+
+	}
+
+
+
+
+
+
+
 
 
 	scope.bindButtons = function( buttons_to_bind ){
@@ -54,25 +110,28 @@ function Tetris(){
 		score = 0;
 		//reset glass
 		for (var i = 0; i < scope.GLASS_WIDTH; i++) {
-			scope.glass[i] = [];
+			glass[i] = [];
 			for (var j = 0; j < scope.GLASS_HEIGHT; j++) {
-				scope.glass[i][j] = 0;
+				glass[i][j] = 0;
 			}
 		}
 		//console.log(scope.glass);
 
 		//reset visual
-
+		window.onload = function(){
+			document.body.appendChild(canvas);
+			drawBoard();
+		}
 		//listeners buttons
 		window.addEventListener("keydown", onKeyDown);
 		window.addEventListener("keyup", onKeyUp);
 		createFigure();
-		console.log(scope.figure_current.form);
+		console.log(figure_current.form);
 		//figureToGlass();
 		dropFigure();
 		dropFigure();
-		// dropFigure();
-		// dropFigure();
+		dropFigure();
+		dropFigure();
 		// dropFigure();
 		// dropFigure();
 		// dropFigure();
@@ -141,7 +200,7 @@ function Tetris(){
 
 		var keys = Object.keys(figures);
 		//Choose random figure
-		scope.figure_current = {
+		figure_current = {
 			form : figures[keys[Math.floor( Math.random() * keys.length)]],
 			//set start coordinates
 			x : Math.floor(scope.GLASS_WIDTH / 2) - 1,
@@ -159,40 +218,37 @@ function Tetris(){
 
 	function dropFigure(){
 
-		//var is_possible = true;
 		while(true){
 
-			var _current = scope.figure_current;
-			var _form = _current.form[_current.phase];
+			var _form = figure_current.form[figure_current.phase];
 			for (var i = 0; i < _form.length; i++){
 				for (var j = 0; j < _form[i].length; j++){
 					if (_form[i][j] == 1)
 					{
-						if(scope.glass[i + _current.x][j + _current.y + 1] != 0){
+						if(glass[i + figure_current.x][j + figure_current.y + 1] != 0){
 							figureToGlass();
-							console.log(scope.glass);
+							console.log(glass);
 							return;
 						}
 					}
 				}
 			}
 
-			scope.figure_current.y++;	
+			figure_current.y++;	
 		}
 
 	}
 
 	function figureToGlass(){
 
-		var _current = scope.figure_current;
-		var _form = _current.form[_current.phase];
+		var _form = figure_current.form[figure_current.phase];
 
 		for (var i = 0; i < _form.length; i++){
 
 			for (var j = 0; j < _form[i].length; j++){
 				if (_form[i][j])
 				{
-					scope.glass[i + _current.x][j + _current.y] = parseInt(_form[i][j])||scope.glass[i + _current.x][j + _current.y];
+					glass[i + figure_current.x][j + figure_current.y] = parseInt(_form[i][j])||glass[i + figure_current.x][j + figure_current.y];
 				}
 			}
 		}
