@@ -2,11 +2,11 @@ var tetris = new Tetris();
 
 tetris.bindButtons (
 	{
-		37: "left",
-		39: "right",
-		40: "speed-up",
-		38: "rotate", 
-		32: "instant"
+		"left" : 37,
+		"right" : 39,
+		"speed-up" : 40,
+		"rotate" : 38,
+		"instant" : 32
 	}
 );
 

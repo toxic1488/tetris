@@ -12,8 +12,8 @@ function Tetris(){
 	var figures = {};
 	var current_x, current_y;
 
-	scope.GLASS_WIDTH = 10;//columns
-	scope.GLASS_HEIGHT = 20;//rows
+	var GLASS_WIDTH = 10;//columns
+	var GLASS_HEIGHT = 20;//rows
 
 
 	//VISUAL
@@ -21,8 +21,8 @@ function Tetris(){
 	var ctx = canvas.getContext('2d');
 	canvas.height = 400;
 	canvas.width = 200;
-	var block_w = canvas.width / scope.GLASS_WIDTH;
-	var block_h = canvas.height / scope.GLASS_HEIGHT;
+	var block_w = canvas.width / GLASS_WIDTH;
+	var block_h = canvas.height / GLASS_HEIGHT;
 
 	function drawBlock( x, y){
 		ctx.fillRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
@@ -34,8 +34,8 @@ function Tetris(){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		ctx.strokeStyle = 'black';
 
-		for (var x = 0; x < scope.GLASS_WIDTH; ++x) {
-			for (var y = 0; y < scope.GLASS_HEIGHT; ++y) {
+		for (var x = 0; x < GLASS_WIDTH; ++x) {
+			for (var y = 0; y < GLASS_HEIGHT; ++y) {
 				//console.log(tetris.glass[y][x]);
 				if (glass[x][y] == 0){
 					ctx.fillStyle = 'white';
@@ -76,7 +76,7 @@ function Tetris(){
 
 		for (var button in buttons_to_bind){
 			pressed_keys[button] = {
-				action: buttons_to_bind[button],
+				code: buttons_to_bind[button],
 				pressed: false
 			};
 		}
@@ -109,9 +109,9 @@ function Tetris(){
 		state = "playing";
 		score = 0;
 		//reset glass
-		for (var i = 0; i < scope.GLASS_WIDTH; i++) {
+		for (var i = 0; i < GLASS_WIDTH; i++) {
 			glass[i] = [];
-			for (var j = 0; j < scope.GLASS_HEIGHT; j++) {
+			for (var j = 0; j < GLASS_HEIGHT; j++) {
 				glass[i][j] = 0;
 			}
 		}
@@ -137,7 +137,9 @@ function Tetris(){
 		// dropFigure();
 		//createFigure();
 		//moveFigure();
+
 		//game cicle start
+		gameStep();
 	}
 
 	scope.setPaused = function( _paused ){
@@ -152,25 +154,30 @@ function Tetris(){
 		return score;
 	}
 
-	scope.isActionActive = function( action ){
+	// scope.isActionActive = function( action ){
 
-		for (var code in pressed_keys) {
-			if (pressed_keys[code].pressed && pressed_keys[code].action == action){
-				return true;
-			}
-		}
-		return false;
+	// 	for (var code in pressed_keys) {
+	// 		if (pressed_keys[code].pressed && pressed_keys[code].action == action){
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+
+
+	function gameStep(){
+
 	}
 
 	function onKeyDown( event ){
-		for (var code in pressed_keys){
+		for (var key in pressed_keys){
 
-			if (event.keyCode == code){
-				pressed_keys[code].pressed = true;
+			if (event.keyCode == pressed_keys[key].code){
+				pressed_keys[key].pressed = true;
 
 				var key_event = new CustomEvent("onkeydown", {
 					detail: {
-						action: pressed_keys[code].action
+						action: pressed_keys[key]
 						}
 					});
 
@@ -180,14 +187,14 @@ function Tetris(){
 	}
 
 	function onKeyUp( event ){
-		for (var code in pressed_keys){
+		for (var key in pressed_keys){
 
-			if (event.keyCode == code){
-				pressed_keys[code].pressed = false;
+			if (event.keyCode == pressed_keys[key].code){
+				pressed_keys[key].pressed = false;
 
 				var key_event = new CustomEvent("onkeyup", {
 					detail: {
-						action: pressed_keys[code].action
+						action: pressed_keys[key]
 						}
 					});
 
@@ -203,7 +210,7 @@ function Tetris(){
 		figure_current = {
 			form : figures[keys[Math.floor( Math.random() * keys.length)]],
 			//set start coordinates
-			x : Math.floor(scope.GLASS_WIDTH / 2) - 1,
+			x : Math.floor(GLASS_WIDTH / 2) - 1,
 			y : 0,
 			//phase
 			phase : 0
