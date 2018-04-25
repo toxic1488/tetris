@@ -166,26 +166,20 @@ function Tetris(){
 
 		if (!pressed_keys["right"].pressed || !pressed_keys["left"].pressed){
 			if (pressed_keys["left"].pressed){
-				console.log("left");
 				moveFigure(-1, 0);
-				//figure_current.x--;
 			}
 			if (pressed_keys["right"].pressed){
-				console.log("right");
 				moveFigure(1, 0);
-				//figure_current.x++;
 			}
 		}
 
 		if (pressed_keys["rotate"].pressed){
-			console.log("rotate");
 			moveFigure(0, 0, 1);
 			pressed_keys["rotate"].pressed = false;
 		}
 
 		if (pressed_keys["speed-up"].pressed){
 			fall_delta /= 2;
-			console.log(fall_delta);
 			pressed_keys["speed-up"].pressed = false;
 		}
 
@@ -195,9 +189,14 @@ function Tetris(){
 		}
 		
 		if ((new Date().getTime() - time) > fall_delta) {
+
 			time = new Date().getTime();
+			var current_y = figure_current.y;
 			moveFigure(0, 1);
-			//console.log("step");
+			if (current_y == figure_current.y) {
+				figureToGlass();
+			}
+			
 		}
 
 		drawBoard();
@@ -264,17 +263,20 @@ function Tetris(){
 
 			for (var j = 0; j < _form[i].length; j++){
 
+				if((i + figure_current.x + x < 0) || (i + figure_current.x + x > GLASS_WIDTH - 1) || (j + figure_current.y +y > GLASS_HEIGHT - 1)) {
+					return false;
+				}
+
 				if (_form[i][j] == 1){
-					if(glass[i + figure_current.x + x][j + figure_current.y + y] != 0){
-						figureToGlass();
-						//console.log(glass);
-						return;
+					if((glass[i + figure_current.x + x][j + figure_current.y + y] == 1)){
+						return false;
 					}
 				}
 			}
 		}
 		figure_current.x += x;
 		figure_current.y += y;
+		return true;
 
 	}
 
@@ -282,21 +284,12 @@ function Tetris(){
 
 		while(true){
 
-			var _form = figure_current.form[figure_current.phase];
-			for (var i = 0; i < _form.length; i++){
-				for (var j = 0; j < _form[i].length; j++){
-					if (_form[i][j] == 1)
-					{
-						if(glass[i + figure_current.x][j + figure_current.y + 1] != 0){
-							figureToGlass();
-							console.log(glass);
-							return;
-						}
-					}
-				}
+			var current_y = figure_current.y;
+			moveFigure(0, 1);
+			if (current_y == figure_current.y) {
+				figureToGlass();
+				return;
 			}
-
-			figure_current.y++;	
 		}
 
 	}
@@ -316,11 +309,13 @@ function Tetris(){
 		}
 		checkFilledRows();
 		createFigure();
+
 	}
 
 	function checkFilledRows(){
 
 		for (var y = GLASS_HEIGHT - 1; y >= 0; y--) {
+
 			var check = true;
 			for (var x = GLASS_WIDTH - 1; x >= 0; x--) {
 				if (glass[x][y] == 0) {
@@ -330,6 +325,7 @@ function Tetris(){
 			}
 
 			if (check) {
+
 				for (var yy = y; yy > 0; yy--) {
 					for (var x = 0; x < GLASS_WIDTH - 1; x++) {
 						glass[x][yy] = glass[x][yy - 1];		
@@ -349,6 +345,7 @@ function Tetris(){
 	function transpose( matrix ){
 
 		var copy = [];
+
 		for (var i = 0; i < matrix.length; ++i) {
 			for (var j = 0; j < matrix[i].length; ++j) {
 				// create row if it doesn't exist yet
@@ -362,5 +359,6 @@ function Tetris(){
 		}
 		return copy;
 	}
+
 	return scope;
 }
