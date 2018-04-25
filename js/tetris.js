@@ -27,25 +27,23 @@ function Tetris(){
 		console.log("binded buttons", pressed_keys);
 
 	}
+
 	scope.bindFigures = function( figures_to_bind ){
 
-		for (var figure in figures_to_bind){
+		for (var i = 0; i < figures_to_bind.length; i++){
 
-			var _figure = figures_to_bind[figure];
-			var _forms = _figure.form.split(';');
-			for (var i = 0; i < _forms.length; i++) {
-				_forms[i] = _forms[i].split(',');
+			var _forms =  figures_to_bind[i].split(';');
+			for (var j = 0; j < _forms.length; j++) {
+				_forms[j] = _forms[j].split(',');
 			}
 			
 			var array_of_figures = [_forms];
 
-			for (var i = 1; i < 4; i++) {
-				array_of_figures.push(transpose(array_of_figures[i - 1]))
+			for (var j = 1; j < 4; j++) {
+				array_of_figures.push(transpose(array_of_figures[j - 1]))
 			}
 
-			figures[figure] = {
-				form: array_of_figures
-			};
+			figures[i] = array_of_figures;
 		}
 		console.log("binded figures", figures);
 	}
@@ -144,7 +142,7 @@ function Tetris(){
 		var keys = Object.keys(figures);
 		//Choose random figure
 		scope.figure_current = {
-			form : figures[keys[Math.floor( Math.random() * keys.length)]].form,
+			form : figures[keys[Math.floor( Math.random() * keys.length)]],
 			//set start coordinates
 			x : Math.floor(scope.GLASS_WIDTH / 2) - 1,
 			y : 0,
