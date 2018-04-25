@@ -11,6 +11,7 @@ function Tetris(){
 	var score = 0;
 	var figures = {};
 	var current_x, current_y;
+	var time;
 
 	var GLASS_WIDTH = 10;//columns
 	var GLASS_HEIGHT = 20;//rows
@@ -60,7 +61,7 @@ function Tetris(){
 					}
 				}
 			}
-		//tetris.figure_current.y++;
+		//figure_current.y++;
 
 	}
 
@@ -107,6 +108,7 @@ function Tetris(){
 	scope.startGame = function(){
 
 		state = "playing";
+		//reset score
 		score = 0;
 		//reset glass
 		for (var i = 0; i < GLASS_WIDTH; i++) {
@@ -115,7 +117,6 @@ function Tetris(){
 				glass[i][j] = 0;
 			}
 		}
-		//console.log(scope.glass);
 
 		//reset visual
 		window.onload = function(){
@@ -128,18 +129,13 @@ function Tetris(){
 		createFigure();
 		console.log(figure_current.form);
 		//figureToGlass();
-		dropFigure();
-		dropFigure();
-		dropFigure();
-		dropFigure();
+		//dropFigure();
 		// dropFigure();
 		// dropFigure();
-		// dropFigure();
-		//createFigure();
-		//moveFigure();
+		//moveFigure(); 
 
 		//game cicle start
-		gameStep();
+		setInterval( gameStep, 40);
 	}
 
 	scope.setPaused = function( _paused ){
@@ -167,6 +163,45 @@ function Tetris(){
 
 	function gameStep(){
 
+
+		if (!pressed_keys["right"].pressed || !pressed_keys["left"].pressed){
+			if (pressed_keys["left"].pressed){
+				console.log("left");
+				moveFigure(-1, 0);
+				//figure_current.x--;
+			}
+			if (pressed_keys["right"].pressed){
+				console.log("right");
+				moveFigure(1, 0);
+				//figure_current.x++;
+			}
+		}
+
+		if (pressed_keys["rotate"].pressed){
+			console.log("rotate");
+			moveFigure(0, 0, 1);
+			pressed_keys["rotate"].pressed = false;
+		}
+
+		if (pressed_keys["speed-up"].pressed){
+			fall_delta /= 2;
+			console.log(fall_delta);
+			pressed_keys["speed-up"].pressed = false;
+		}
+
+		if (pressed_keys["instant"].pressed) {
+			dropFigure();
+			pressed_keys["instant"].pressed = false;
+		}
+		
+		if ((new Date().getTime() - time) > fall_delta) {
+			time = new Date().getTime();
+			moveFigure(0, 1);
+			//console.log("step");
+		}
+
+		drawBoard();
+		drawMovingBlock();
 	}
 
 	function onKeyDown( event ){
@@ -213,14 +248,34 @@ function Tetris(){
 			x : Math.floor(GLASS_WIDTH / 2) - 1,
 			y : 0,
 			//phase
-			phase : 0
+			phase : 1
 		}
-		//delata for
+		//delata
+		time = new Date().getTime();
 
 	}
 
 	function moveFigure( x, y, phase ){
-			
+		
+		if (phase !== undefined) figure_current.phase = (figure_current.phase + 3) % 4;
+
+		var _form = figure_current.form[figure_current.phase];
+		for (var i = 0; i < _form.length; i++){
+
+			for (var j = 0; j < _form[i].length; j++){
+
+				if (_form[i][j] == 1){
+					if(glass[i + figure_current.x + x][j + figure_current.y + y] != 0){
+						figureToGlass();
+						//console.log(glass);
+						return;
+					}
+				}
+			}
+		}
+		figure_current.x += x;
+		figure_current.y += y;
+
 	}
 
 	function dropFigure(){
@@ -265,6 +320,26 @@ function Tetris(){
 
 	function checkFilledRows(){
 
+		for (var y = GLASS_HEIGHT - 1; y >= 0; y--) {
+			var check = true;
+			for (var x = GLASS_WIDTH - 1; x >= 0; x--) {
+				if (glass[x][y] == 0) {
+					check = false;
+					break;
+				}
+			}
+
+			if (check) {
+				for (var yy = y; yy > 0; yy--) {
+					for (var x = 0; x < GLASS_WIDTH - 1; x++) {
+						glass[x][yy] = glass[x][yy - 1];		
+					}
+				}
+				score++;
+				console.log("score: ", score);
+				y++;
+			}
+		}
 	}
 
 	function gameOver(){
