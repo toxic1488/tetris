@@ -12,6 +12,7 @@ function Tetris(){
 	var figures = {};
 	var current_x, current_y;
 	var time;
+	var game_cicle
 
 	var GLASS_WIDTH = 10;//columns
 	var GLASS_HEIGHT = 20;//rows
@@ -135,7 +136,9 @@ function Tetris(){
 		//moveFigure(); 
 
 		//game cicle start
-		setInterval( gameStep, 40);
+		if (state == "playing"){
+			game_cicle = setInterval( gameStep, 40);
+		}
 	}
 
 	scope.setPaused = function( _paused ){
@@ -196,7 +199,7 @@ function Tetris(){
 			if (current_y == figure_current.y) {
 				figureToGlass();
 			}
-			
+
 		}
 
 		drawBoard();
@@ -209,13 +212,13 @@ function Tetris(){
 			if (event.keyCode == pressed_keys[key].code){
 				pressed_keys[key].pressed = true;
 
-				var key_event = new CustomEvent("onkeydown", {
-					detail: {
-						action: pressed_keys[key]
-						}
-					});
+				// var key_event = new CustomEvent("onkeydown", {
+				// 	detail: {
+				// 		action: pressed_keys[key]
+				// 		}
+				// 	});
 
-				window.dispatchEvent( key_event );
+				// window.dispatchEvent( key_event );
 			}
 		}
 	}
@@ -226,13 +229,13 @@ function Tetris(){
 			if (event.keyCode == pressed_keys[key].code){
 				pressed_keys[key].pressed = false;
 
-				var key_event = new CustomEvent("onkeyup", {
-					detail: {
-						action: pressed_keys[key]
-						}
-					});
+				// var key_event = new CustomEvent("onkeyup", {
+				// 	detail: {
+				// 		action: pressed_keys[key]
+				// 		}
+				// 	});
 
-				window.dispatchEvent( key_event );
+				// window.dispatchEvent( key_event );
 			}
 		}
 	}
@@ -245,15 +248,21 @@ function Tetris(){
 			form : figures[keys[Math.floor( Math.random() * keys.length)]],
 			//set start coordinates
 			x : Math.floor(GLASS_WIDTH / 2) - 1,
-			y : 0,
+			y : -2 ,
 			//phase
 			phase : 1
 		}
 		//delata
 		time = new Date().getTime();
 
-	}
+		var current_y = figure_current.y;
+		moveFigure(0, 1);
+		if (current_y == figure_current.y) {
+			gameOver();
+		}
 
+	}
+ 
 	function moveFigure( x, y, phase ){
 		
 		if (phase !== undefined) figure_current.phase = (figure_current.phase + 3) % 4;
@@ -340,6 +349,11 @@ function Tetris(){
 
 	function gameOver(){
 
+		clearInterval(game_cicle);
+		state = "gameover";
+		window.removeEventListener("keydown", onKeyDown);
+		window.removeEventListener("keyup", onKeyUp);
+		alert("game Over, score: " + score);
 	}
 
 	function transpose( matrix ){
