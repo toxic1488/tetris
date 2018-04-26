@@ -2,11 +2,10 @@ function Tetris(){
 
 	var scope = this;
 
-	var pressed_keys = {};// TODO: переделать
-	var glass = [];
 
 	var state = "inactive";// TODO: переделать
 
+	var glass = [];
 	var is_paused = false;
 	var figure_current;
 	var fall_delta = 700;
@@ -19,6 +18,57 @@ function Tetris(){
 	var GLASS_WIDTH = 10;//columns
 	var GLASS_HEIGHT = 20;//rows
 
+/*
+ ██████╗ ██████╗ ███╗   ██╗████████╗██████╗  ██████╗ 
+██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔══██╗██╔═══██╗
+██║     ██║   ██║██╔██╗ ██║   ██║   ██████╔╝██║   ██║
+██║     ██║   ██║██║╚██╗██║   ██║   ██╔══██╗██║   ██║
+╚██████╗╚██████╔╝██║ ╚████║   ██║   ██║  ██║╚██████╔╝
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ 
+                                                     
+██╗     ██╗     ███████╗██████╗                      
+██║     ██║     ██╔════╝██╔══██╗                     
+██║     ██║     █████╗  ██████╔╝                     
+██║     ██║     ██╔══╝  ██╔══██╗                     
+███████╗███████╗███████╗██║  ██║                     
+╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝                     
+                                                     
+*/	
+
+	var controller = new Controller();
+
+	controller.bindActions (
+		{
+			"left":{
+				keys: [37, 65],
+				gestures: ["swipe_left", "mouse_swipe_left"]
+			},
+			"instant":{
+				keys: [32],
+				gestures: ["tap", "click"]
+			},
+			"right":{
+				keys: [39, 68],
+				gestures: ["swipe_right", "mouse_swipe_right"]
+				//enabled: false
+			},
+			"rotate":{
+				keys: [38, 87],
+				gestures: ["swipe_up", "mouse_swipe_up"]
+			},
+			"speed-up":{
+				keys: [40, 83],
+				gestures: ["swipe_down", "mouse_swipe_down"]
+			}
+		}
+	);
+
+	controller.attach(window);
+	controller.setEnabled({
+		keyboard: true,
+		mouse: !true,
+		touch: !true
+	});
 
 /*
 ██████╗ ███████╗███╗   ██╗██████╗ ███████╗██████╗ ██╗███╗   ██╗ ██████╗ 
@@ -75,29 +125,12 @@ function Tetris(){
 				}
 			}
 		}
-		//figure_current.y++;
-
 	}
 
 
 
 
 
-
-
-
-
-	scope.bindButtons = function( buttons_to_bind ){
-
-		for (var button in buttons_to_bind){
-			pressed_keys[button] = {
-				code: buttons_to_bind[button],
-				pressed: false
-			};
-		}
-		console.log("binded buttons", pressed_keys);
-
-	}
 
 	scope.bindFigures = function( figures_to_bind ){
 
@@ -143,17 +176,32 @@ function Tetris(){
 		state = "playing";
 
 		resetGlass();
-		//listeners buttons
-		window.addEventListener("keydown", onKeyDown);
-		window.addEventListener("keyup", onKeyUp);
+
 		createFigure();
 		console.log(figure_current.form);
-		//figureToGlass();
-		//dropFigure();
-		// dropFigure();
-		// dropFigure();
-		//moveFigure(); 
 
+		//listeners buttons
+		window.addEventListener( controller.ACTION_ACTIVATED, onActionActivated );
+		window.addEventListener( controller.ACTION_DEACTIVATED, onActionDeActivated );
+
+
+		function onActionActivated(e) {
+			switch ( e.detail.action ){
+				case "rotate":
+					moveFigure(0, 0, 1);
+					break;
+				case "speed-up":
+					current_fall_delta = current_fall_delta / 2;
+					break;
+				case "instant":
+					dropFigure();
+					break;
+			}
+		}
+
+		function onActionDeActivated(e) {
+
+		}
 		//game cicle start
 		if (state == "playing"){
 			game_loop = setInterval( gameStep, 40);
@@ -174,31 +222,28 @@ function Tetris(){
 
 	function gameStep(){
 
-
-		if (!pressed_keys["right"].pressed || !pressed_keys["left"].pressed){
-			if (pressed_keys["left"].pressed){
-				moveFigure(-1, 0);
-			}
-			if (pressed_keys["right"].pressed){
+		if (!controller.isActionActive("right") || !controller.isActionActive("left")){
+			if(controller.isActionActive("right")){
 				moveFigure(1, 0);
 			}
+			if(controller.isActionActive("left")){
+				moveFigure(-1, 0);
+			}
 		}
 
-		if (pressed_keys["rotate"].pressed){
-			moveFigure(0, 0, 1);
-			pressed_keys["rotate"].pressed = false;
-		}
+		// if (controller.isActionActive("rotate")){
+		// 	console.log("rotate");
+		// 	moveFigure(0, 0, 1);
+		// }
 
-		if (pressed_keys["speed-up"].pressed){
-			current_fall_delta = current_fall_delta / 2;
-			pressed_keys["speed-up"].pressed = false;
+		// if (controller.isActionActive("speed-up")){
+		// 	current_fall_delta = current_fall_delta / 2;
+		// }
 
-		}
+		// if (controller.isActionActive("instant")){
+		// 	dropFigure();
+		// }
 
-		if (pressed_keys["instant"].pressed) {
-			dropFigure();
-			pressed_keys["instant"].pressed = false;
-		}
 		
 		if ((Date.now() - time) > current_fall_delta) {
 
@@ -212,24 +257,6 @@ function Tetris(){
 
 		drawBoard();
 		drawMovingBlock();
-	}
-
-	function onKeyDown( event ){
-		for (var key in pressed_keys){
-
-			if (event.keyCode == pressed_keys[key].code){
-				pressed_keys[key].pressed = true;
-			}
-		}
-	}
-
-	function onKeyUp( event ){
-		for (var key in pressed_keys){
-
-			if (event.keyCode == pressed_keys[key].code){
-				pressed_keys[key].pressed = false;
-			}
-		}
 	}
 
 	function createFigure(){
@@ -343,8 +370,9 @@ function Tetris(){
 
 		clearInterval(game_loop);
 		state = "gameover";
-		window.removeEventListener("keydown", onKeyDown);
-		window.removeEventListener("keyup", onKeyUp);
+		// window.removeEventListener(controller.ACTION_ACTIVATED, onActionActivated);
+		// window.removeEventListener(controller.ACTION_DEACTIVATED, onActionDeActivated);
+		controller.detach();
 		alert("game Over, score: " + score);
 	}
 
