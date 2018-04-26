@@ -215,7 +215,7 @@ function Controller(){
 		}
 		if (Math.abs( xDiff ) <= 2 && Math.abs( yDiff ) <= 2){
 			if (is_double_tap){
-				gesture = gestures[4];
+				gesture = gesturesArray[4];
 			}else{
 				gesture = null;
 			}

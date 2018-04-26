@@ -36,7 +36,7 @@ function Tetris(){
 	function statePlaying(){
 
 		setState(STATE.PLAYING);
-		game_loop = setInterval( gameStep, 40);
+		scope.startGame();
 	}
 
 	function stateGameOver(){
@@ -44,6 +44,7 @@ function Tetris(){
 		setState(STATE.GAMEOVER);
 		clearInterval(game_loop);
 		alert("game Over, score: " + score);
+		controller.detach();
 	}
 
 
@@ -194,16 +195,27 @@ function Tetris(){
 			}
 		}
 		//reset visual
-		window.onload = function(){
-			document.body.appendChild(canvas);
-			drawBoard();
-		}
 	}
 
 	scope.startGame = function(){
 
-		//state = "playing";
-
+		window.onload = function(){
+			document.body.appendChild(canvas);
+			drawBoard();
+			document.getElementById("pause").onclick = function(){
+				scope.setPaused(is_paused);
+				console.log("pause:", is_paused);
+			}
+			document.getElementById("start").onclick = function(){
+				console.log("started");
+				resetGlass();
+				scope.setPaused(true);
+				score = 0;
+				createFigure();
+				document.getElementById("score").innerHTML = "Score: " + score.toString();
+			}
+			document.getElementById("score").innerHTML = "Score: " + score.toString();
+		}
 		resetGlass();
 
 		createFigure();
@@ -211,7 +223,7 @@ function Tetris(){
 
 		//listeners buttons
 		window.addEventListener( controller.ACTION_ACTIVATED, onActionActivated );
-		window.addEventListener( controller.ACTION_DEACTIVATED, onActionDeActivated );
+		//window.addEventListener( controller.ACTION_DEACTIVATED, onActionDeActivated );
 
 
 		function onActionActivated(e) {
@@ -248,7 +260,7 @@ function Tetris(){
 		//if (state == "playing"){
 		//	game_loop = setInterval( gameStep, 40);
 		//}
-		statePlaying();
+		game_loop = setInterval( gameStep, 40);
 	}
 
 	scope.setPaused = function( _paused ){
@@ -288,7 +300,7 @@ function Tetris(){
 		// }
 
 		
-		if ((Date.now() - time) > current_fall_delta) {
+		if (((Date.now() - time) > current_fall_delta) && !scope.isPaused()){
 
 			time = Date.now();
 
@@ -329,35 +341,38 @@ function Tetris(){
 		
 		var length = figure_current.form.length
 		var _form = figure_current.form[figure_current.phase];
-		
-		if (phase !== undefined) figure_current.phase = (figure_current.phase + length - 1) % length;
+		if(!scope.isPaused()){
+			if (phase !== undefined) figure_current.phase = (figure_current.phase + length - 1) % length;
 
-		for (var i = 0; i < _form.length; i++){
+			for (var i = 0; i < _form.length; i++){
 
-			for (var j = 0; j < _form[i].length; j++){
+				for (var j = 0; j < _form[i].length; j++){
 
-				if((i + figure_current.x + x < 0) || (i + figure_current.x + x > GLASS_WIDTH - 1) || (j + figure_current.y +y > GLASS_HEIGHT - 1)) {
-					return false;
-				}
+					if((i + figure_current.x + x < 0) || (i + figure_current.x + x > GLASS_WIDTH - 1) || (j + figure_current.y +y > GLASS_HEIGHT - 1)) {
+						return false;
+					}
 
-				if (parseInt(_form[i][j]) + glass[i + figure_current.x + x][j + figure_current.y + y] > 1 ){
-					return false;
+					if (parseInt(_form[i][j]) + glass[i + figure_current.x + x][j + figure_current.y + y] > 1 ){
+						return false;
+					}
 				}
 			}
-		}
-		figure_current.x += x;
-		figure_current.y += y;
-		return true;
+			figure_current.x += x;
+			figure_current.y += y;
+			return true;
+		}else return false;
 
 	}
 
 	function dropFigure(){
 
-		while(true){
+		if(!scope.isPaused()){
+			while(true){
 
-			if (!moveFigure(0, 1)) {
-				figureToGlass();
-				return;
+				if (!moveFigure(0, 1)) {
+					figureToGlass();
+					return;
+				}
 			}
 		}
 
@@ -402,6 +417,7 @@ function Tetris(){
 				}
 				score++;
 				console.log("score: ", score);
+				document.getElementById("score").innerHTML = "Score: " + score.toString();
 				fall_delta -= 25;
 				console.log("fall_delta :", fall_delta);
 				y++;
@@ -415,7 +431,7 @@ function Tetris(){
 		
 		// window.removeEventListener(controller.ACTION_ACTIVATED, onActionActivated);
 		// window.removeEventListener(controller.ACTION_DEACTIVATED, onActionDeActivated);
-		controller.detach();
+		
 		
 	}
 
