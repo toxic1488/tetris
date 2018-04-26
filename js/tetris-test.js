@@ -24,43 +24,6 @@ tetris.bindFigures(
 
 tetris.startGame();
 
-// window.addEventListener( "onkeydown", onActionActivated );
-// window.addEventListener( "onkeyup", onActionDeactivated );
+// if( tetris.setState(tetris.PAUSED) ){
 
-// function onActionActivated(e) {
-	
-// 	console.log("onActionActivated", e.detail.action );
-
-// 	switch(e.detail.action){
-// 		case "left":
-
-// 			break;
-// 		case "right":
-
-// 			break;
-// 		case "speed-up":
-
-// 			break;
-// 		case "rotate":
-
-// 			break;
-// 		case "instant":
-
-// 			break;
-// 	}
-
-// }
-
-// function onActionDeactivated(e) {
-	
-// 	console.log("onActionDectivated", e.detail.action );
-
-// }
-// setInterval( gameStep, 640);
-// function gameStep(){
-// 	if( tetris.isActionActive("left") ){
-// 		console.log("aa");
-// 	}
-// 	//drawBoard();
-// 	//drawMovingBlock();
-// }
+// };

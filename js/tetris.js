@@ -2,23 +2,33 @@ function Tetris(){
 
 	var scope = this;
 
-	var pressed_keys = {};
+	var pressed_keys = {};// TODO: переделать
 	var glass = [];
-	var state = "inactive";
+
+	var state = "inactive";// TODO: переделать
+
 	var is_paused = false;
-	var figure_current = {};
+	var figure_current;
 	var fall_delta = 700;
+	var current_fall_delta;
 	var score = 0;
 	var figures = {};
-	var current_x, current_y;
 	var time;
-	var game_cicle
+	var game_loop;
 
 	var GLASS_WIDTH = 10;//columns
 	var GLASS_HEIGHT = 20;//rows
 
 
-	//VISUAL
+/*
+██████╗ ███████╗███╗   ██╗██████╗ ███████╗██████╗ ██╗███╗   ██╗ ██████╗ 
+██╔══██╗██╔════╝████╗  ██║██╔══██╗██╔════╝██╔══██╗██║████╗  ██║██╔════╝ 
+██████╔╝█████╗  ██╔██╗ ██║██║  ██║█████╗  ██████╔╝██║██╔██╗ ██║██║  ███╗
+██╔══██╗██╔══╝  ██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗██║██║╚██╗██║██║   ██║
+██║  ██║███████╗██║ ╚████║██████╔╝███████╗██║  ██║██║██║ ╚████║╚██████╔╝
+╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+*/
+	//VISUAL // TODO: вынести в отдельный
 	var canvas = document.createElement('canvas');
 	var ctx = canvas.getContext('2d');
 	canvas.height = 400;
@@ -50,18 +60,21 @@ function Tetris(){
 			}
 		}
 
-	}
+	} 
 
 	function drawMovingBlock(){
-			for (var i = 0; i < figure_current.form[figure_current.phase].length; i++){
-				for (var j = 0; j < figure_current.form[figure_current.phase][i].length; j++){
-					if (figure_current.form[figure_current.phase][i][j] == 1)
-					{
-						ctx.fillStyle = 'blue';
-						drawBlock(figure_current.x + i, figure_current.y + j);
-					}
+		
+		var _current_phase = figure_current.form[figure_current.phase];
+		ctx.fillStyle = 'blue';
+
+		for (var i = 0; i < _current_phase.length; i++){
+			for (var j = 0; j < _current_phase[i].length; j++){
+				if (_current_phase[i][j] == 1)
+				{
+					drawBlock(figure_current.x + i, figure_current.y + j);
 				}
 			}
+		}
 		//figure_current.y++;
 
 	}
@@ -106,9 +119,9 @@ function Tetris(){
 		console.log("binded figures", figures);
 	}
 
-	scope.startGame = function(){
 
-		state = "playing";
+	function resetGlass(){
+		
 		//reset score
 		score = 0;
 		//reset glass
@@ -118,12 +131,18 @@ function Tetris(){
 				glass[i][j] = 0;
 			}
 		}
-
 		//reset visual
 		window.onload = function(){
 			document.body.appendChild(canvas);
 			drawBoard();
 		}
+	}
+
+	scope.startGame = function(){
+
+		state = "playing";
+
+		resetGlass();
 		//listeners buttons
 		window.addEventListener("keydown", onKeyDown);
 		window.addEventListener("keyup", onKeyUp);
@@ -137,7 +156,7 @@ function Tetris(){
 
 		//game cicle start
 		if (state == "playing"){
-			game_cicle = setInterval( gameStep, 40);
+			game_loop = setInterval( gameStep, 40);
 		}
 	}
 
@@ -152,17 +171,6 @@ function Tetris(){
 	scope.getScore = function(){
 		return score;
 	}
-
-	// scope.isActionActive = function( action ){
-
-	// 	for (var code in pressed_keys) {
-	// 		if (pressed_keys[code].pressed && pressed_keys[code].action == action){
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-
 
 	function gameStep(){
 
@@ -182,8 +190,9 @@ function Tetris(){
 		}
 
 		if (pressed_keys["speed-up"].pressed){
-			fall_delta /= 2;
+			current_fall_delta = current_fall_delta / 2;
 			pressed_keys["speed-up"].pressed = false;
+
 		}
 
 		if (pressed_keys["instant"].pressed) {
@@ -191,12 +200,11 @@ function Tetris(){
 			pressed_keys["instant"].pressed = false;
 		}
 		
-		if ((new Date().getTime() - time) > fall_delta) {
+		if ((Date.now() - time) > current_fall_delta) {
 
-			time = new Date().getTime();
-			var current_y = figure_current.y;
-			moveFigure(0, 1);
-			if (current_y == figure_current.y) {
+			time = Date.now();
+
+			if (!moveFigure(0,1)) {
 				figureToGlass();
 			}
 
@@ -211,14 +219,6 @@ function Tetris(){
 
 			if (event.keyCode == pressed_keys[key].code){
 				pressed_keys[key].pressed = true;
-
-				// var key_event = new CustomEvent("onkeydown", {
-				// 	detail: {
-				// 		action: pressed_keys[key]
-				// 		}
-				// 	});
-
-				// window.dispatchEvent( key_event );
 			}
 		}
 	}
@@ -228,19 +228,13 @@ function Tetris(){
 
 			if (event.keyCode == pressed_keys[key].code){
 				pressed_keys[key].pressed = false;
-
-				// var key_event = new CustomEvent("onkeyup", {
-				// 	detail: {
-				// 		action: pressed_keys[key]
-				// 		}
-				// 	});
-
-				// window.dispatchEvent( key_event );
 			}
 		}
 	}
 
 	function createFigure(){
+
+		current_fall_delta = fall_delta;
 
 		var keys = Object.keys(figures);
 		//Choose random figure
@@ -248,26 +242,26 @@ function Tetris(){
 			form : figures[keys[Math.floor( Math.random() * keys.length)]],
 			//set start coordinates
 			x : Math.floor(GLASS_WIDTH / 2) - 1,
-			y : -2 ,
+			y : -1 ,
 			//phase
 			phase : 1
 		}
 		//delata
-		time = new Date().getTime();
-
-		var current_y = figure_current.y;
-		moveFigure(0, 1);
-		if (current_y == figure_current.y) {
+		time = Date.now();
+  
+		if ( !moveFigure(0, 0) ){
 			gameOver();
-		}
+		}  
 
 	}
  
 	function moveFigure( x, y, phase ){
 		
-		if (phase !== undefined) figure_current.phase = (figure_current.phase + 3) % 4;
-
+		var length = figure_current.form.length
 		var _form = figure_current.form[figure_current.phase];
+		
+		if (phase !== undefined) figure_current.phase = (figure_current.phase + length - 1) % length;
+
 		for (var i = 0; i < _form.length; i++){
 
 			for (var j = 0; j < _form[i].length; j++){
@@ -276,10 +270,8 @@ function Tetris(){
 					return false;
 				}
 
-				if (_form[i][j] == 1){
-					if((glass[i + figure_current.x + x][j + figure_current.y + y] == 1)){
-						return false;
-					}
+				if (parseInt(_form[i][j]) + glass[i + figure_current.x + x][j + figure_current.y + y] > 1 ){
+					return false;
 				}
 			}
 		}
@@ -293,9 +285,7 @@ function Tetris(){
 
 		while(true){
 
-			var current_y = figure_current.y;
-			moveFigure(0, 1);
-			if (current_y == figure_current.y) {
+			if (!moveFigure(0, 1)) {
 				figureToGlass();
 				return;
 			}
@@ -342,6 +332,8 @@ function Tetris(){
 				}
 				score++;
 				console.log("score: ", score);
+				fall_delta -= 25;
+				console.log("fall_delta :", fall_delta);
 				y++;
 			}
 		}
@@ -349,7 +341,7 @@ function Tetris(){
 
 	function gameOver(){
 
-		clearInterval(game_cicle);
+		clearInterval(game_loop);
 		state = "gameover";
 		window.removeEventListener("keydown", onKeyDown);
 		window.removeEventListener("keyup", onKeyUp);
@@ -363,7 +355,7 @@ function Tetris(){
 		for (var i = 0; i < matrix.length; ++i) {
 			for (var j = 0; j < matrix[i].length; ++j) {
 				// create row if it doesn't exist yet
-				if (copy[j] === undefined) copy[j] = [];
+				if ( !copy[j] ) copy[j] = [];
 				// swap the x and y coords for the copy
 				copy[j][i] = matrix[i][j];
 			}
