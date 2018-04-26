@@ -31,8 +31,7 @@ function Tetris(){
 ██║     ██║     █████╗  ██████╔╝                     
 ██║     ██║     ██╔══╝  ██╔══██╗                     
 ███████╗███████╗███████╗██║  ██║                     
-╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝                     
-                                                     
+╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝                                                                       
 */	
 
 	var controller = new Controller();
@@ -67,7 +66,7 @@ function Tetris(){
 	controller.setEnabled({
 		keyboard: true,
 		mouse: !true,
-		touch: !true
+		touch: true
 	});
 
 /*
@@ -186,6 +185,7 @@ function Tetris(){
 
 
 		function onActionActivated(e) {
+
 			switch ( e.detail.action ){
 				case "rotate":
 					moveFigure(0, 0, 1);
@@ -197,6 +197,18 @@ function Tetris(){
 					dropFigure();
 					break;
 			}
+
+			if ( e.detail.devicetype === "swipeble" ){
+				switch ( e.detail.action ){
+					case "left":
+						moveFigure(-1, 0);
+						break;
+					case "right":
+						moveFigure(1, 0);
+						break;
+				}
+			}
+
 		}
 
 		function onActionDeActivated(e) {
