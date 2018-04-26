@@ -2,9 +2,6 @@ function Tetris(){
 
 	var scope = this;
 
-
-	var state = "inactive";// TODO: переделать
-
 	var glass = [];
 	var is_paused = false;
 	var figure_current;
@@ -17,6 +14,39 @@ function Tetris(){
 
 	var GLASS_WIDTH = 10;//columns
 	var GLASS_HEIGHT = 20;//rows
+
+
+
+	const STATE = {
+		INACTIVE: 'inactive',
+		PLAYING: 'playing',
+		GAMEOVER: 'gameover'
+	}
+	var state;
+
+	function setState( value ){
+		state = value;
+	}
+
+	function stateInactive(){
+
+		setState(STATE.INACTIVE);
+	}
+
+	function statePlaying(){
+
+		setState(STATE.PLAYING);
+		game_loop = setInterval( gameStep, 40);
+	}
+
+	function stateGameOver(){
+
+		setState(STATE.GAMEOVER);
+		clearInterval(game_loop);
+		alert("game Over, score: " + score);
+	}
+
+
 
 /*
  ██████╗ ██████╗ ███╗   ██╗████████╗██████╗  ██████╗ 
@@ -172,7 +202,7 @@ function Tetris(){
 
 	scope.startGame = function(){
 
-		state = "playing";
+		//state = "playing";
 
 		resetGlass();
 
@@ -215,9 +245,10 @@ function Tetris(){
 
 		}
 		//game cicle start
-		if (state == "playing"){
-			game_loop = setInterval( gameStep, 40);
-		}
+		//if (state == "playing"){
+		//	game_loop = setInterval( gameStep, 40);
+		//}
+		statePlaying();
 	}
 
 	scope.setPaused = function( _paused ){
@@ -380,12 +411,12 @@ function Tetris(){
 
 	function gameOver(){
 
-		clearInterval(game_loop);
-		state = "gameover";
+		stateGameOver();
+		
 		// window.removeEventListener(controller.ACTION_ACTIVATED, onActionActivated);
 		// window.removeEventListener(controller.ACTION_DEACTIVATED, onActionDeActivated);
 		controller.detach();
-		alert("game Over, score: " + score);
+		
 	}
 
 	function transpose( matrix ){
