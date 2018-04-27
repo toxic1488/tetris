@@ -1,21 +1,20 @@
-function Tetris(){
+function Tetris( render ){
 
 	var scope = this;
+
+	var GLASS_WIDTH = 10;//columns
+	var GLASS_HEIGHT = 20;//rows
+	var BASIC_FALL_DELTA = 700;
 
 	var glass = [];
 	var is_paused = false;
 	var figure_current;
-	var fall_delta = 700;
+	var fall_delta = BASIC_FALL_DELTA;
 	var current_fall_delta;
 	var score = 0;
 	var figures = {};
 	var time;
 	var game_loop;
-
-	var GLASS_WIDTH = 10;//columns
-	var GLASS_HEIGHT = 20;//rows
-
-
 
 	const STATE = {
 		INACTIVE: 'inactive',
@@ -62,7 +61,7 @@ function Tetris(){
 ██║     ██║     █████╗  ██████╔╝                     
 ██║     ██║     ██╔══╝  ██╔══██╗                     
 ███████╗███████╗███████╗██║  ██║                     
-╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝                                                                       
+╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝                                         
 */	
 
 	var controller = new Controller();
@@ -109,53 +108,53 @@ function Tetris(){
 ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
 */
 	//VISUAL // TODO: вынести в отдельный
-	var canvas = document.createElement('canvas');
-	var ctx = canvas.getContext('2d');
-	canvas.height = 400;
-	canvas.width = 200;
-	var block_w = canvas.width / GLASS_WIDTH;
-	var block_h = canvas.height / GLASS_HEIGHT;
+	// var canvas = document.createElement('canvas');
+	// var ctx = canvas.getContext('2d');
+	// canvas.height = 400;
+	// canvas.width = 200;
+	// var block_w = canvas.width / GLASS_WIDTH;
+	// var block_h = canvas.height / GLASS_HEIGHT;
 
-	function drawBlock( x, y){
-		ctx.fillRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
-		ctx.strokeRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
-	}
+	// function drawBlock( x, y){
+	// 	ctx.fillRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
+	// 	ctx.strokeRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
+	// }
 
-	function drawBoard(){
+	// function drawBoard(){
 
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.strokeStyle = 'black';
+	// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	// 	ctx.strokeStyle = 'black';
 
-		for (var x = 0; x < GLASS_WIDTH; ++x) {
-			for (var y = 0; y < GLASS_HEIGHT; ++y) {
-				//console.log(tetris.glass[y][x]);
-				if (glass[x][y] == 0){
-					ctx.fillStyle = 'white';
-					drawBlock(x, y);
-				}
-				if(glass[x][y] == 1){
-					ctx.fillStyle = 'gray';
-					drawBlock(x, y);
-				}
-			}
-		}
+	// 	for (var x = 0; x < GLASS_WIDTH; ++x) {
+	// 		for (var y = 0; y < GLASS_HEIGHT; ++y) {
+	// 			//console.log(tetris.glass[y][x]);
+	// 			if (glass[x][y] == 0){
+	// 				ctx.fillStyle = 'white';
+	// 				drawBlock(x, y);
+	// 			}
+	// 			if(glass[x][y] == 1){
+	// 				ctx.fillStyle = 'gray';
+	// 				drawBlock(x, y);
+	// 			}
+	// 		}
+	// 	}
 
-	} 
+	// } 
 
-	function drawMovingBlock(){
+	// function drawMovingBlock(){
 		
-		var _current_phase = figure_current.form[figure_current.phase];
-		ctx.fillStyle = 'blue';
+	// 	var _current_phase = figure_current.form[figure_current.phase];
+	// 	ctx.fillStyle = 'blue';
 
-		for (var i = 0; i < _current_phase.length; i++){
-			for (var j = 0; j < _current_phase[i].length; j++){
-				if (_current_phase[i][j] == 1)
-				{
-					drawBlock(figure_current.x + i, figure_current.y + j);
-				}
-			}
-		}
-	}
+	// 	for (var i = 0; i < _current_phase.length; i++){
+	// 		for (var j = 0; j < _current_phase[i].length; j++){
+	// 			if (_current_phase[i][j] == 1)
+	// 			{
+	// 				drawBlock(figure_current.x + i, figure_current.y + j);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 
 
@@ -197,25 +196,27 @@ function Tetris(){
 		//reset visual
 	}
 
-	scope.startGame = function(){
-
-		window.onload = function(){
-			document.body.appendChild(canvas);
-			drawBoard();
-			document.getElementById("pause").onclick = function(){
-				scope.setPaused(is_paused);
-				console.log("pause:", is_paused);
-			}
-			document.getElementById("start").onclick = function(){
-				console.log("started");
-				resetGlass();
-				scope.setPaused(true);
-				score = 0;
-				createFigure();
-				document.getElementById("score").innerHTML = "Score: " + score.toString();
-			}
+	window.onload = function(){
+		
+		document.body.appendChild(render.canvas);
+		document.getElementById("pause").onclick = function(){
+			scope.setPaused(is_paused);
+			console.log("pause:", is_paused);
+		}
+		document.getElementById("start").onclick = function(){
+			console.log("started");
+			resetGlass();
+			scope.setPaused(true);
+			score = 0;
+			fall_delta = BASIC_FALL_DELTA;
+			createFigure();
 			document.getElementById("score").innerHTML = "Score: " + score.toString();
 		}
+		document.getElementById("score").innerHTML = "Score: " + score.toString();
+	}
+
+	scope.startGame = function(){
+
 		resetGlass();
 
 		createFigure();
@@ -285,33 +286,18 @@ function Tetris(){
 				moveFigure(-1, 0);
 			}
 		}
-
-		// if (controller.isActionActive("rotate")){
-		// 	console.log("rotate");
-		// 	moveFigure(0, 0, 1);
-		// }
-
-		// if (controller.isActionActive("speed-up")){
-		// 	current_fall_delta = current_fall_delta / 2;
-		// }
-
-		// if (controller.isActionActive("instant")){
-		// 	dropFigure();
-		// }
-
 		
 		if (((Date.now() - time) > current_fall_delta) && !scope.isPaused()){
 
 			time = Date.now();
-
 			if (!moveFigure(0,1)) {
 				figureToGlass();
 			}
 
 		}
 
-		drawBoard();
-		drawMovingBlock();
+		render.drawBoard( glass );
+		render.drawMovingBlock( figure_current );
 	}
 
 	function createFigure(){
@@ -342,7 +328,7 @@ function Tetris(){
 		var length = figure_current.form.length
 		var _form = figure_current.form[figure_current.phase];
 		if(!scope.isPaused()){
-			if (phase !== undefined) figure_current.phase = (figure_current.phase + length - 1) % length;
+			if (phase !== undefined) _form = figure_current.form[(figure_current.phase + length - 1) % length];
 
 			for (var i = 0; i < _form.length; i++){
 
@@ -357,6 +343,7 @@ function Tetris(){
 					}
 				}
 			}
+			if (phase !== undefined) figure_current.phase = (figure_current.phase + length - 1) % length;
 			figure_current.x += x;
 			figure_current.y += y;
 			return true;
@@ -428,11 +415,7 @@ function Tetris(){
 	function gameOver(){
 
 		stateGameOver();
-		
-		// window.removeEventListener(controller.ACTION_ACTIVATED, onActionActivated);
-		// window.removeEventListener(controller.ACTION_DEACTIVATED, onActionDeActivated);
-		
-		
+
 	}
 
 	function transpose( matrix ){

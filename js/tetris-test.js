@@ -1,4 +1,5 @@
-var tetris = new Tetris();
+var render = new Render();
+var tetris = new Tetris( render );
 
 tetris.bindFigures(
 	[
