@@ -1,4 +1,4 @@
-function Render(){	
+function Render(width, height){	
 
 	var scope = this;
 
@@ -6,8 +6,8 @@ function Render(){
 	var ctx = scope.canvas.getContext('2d');
 	scope.canvas.height = 400;
 	scope.canvas.width = 200;
-	var block_w = scope.canvas.width / 10;
-	var block_h = scope.canvas.height / 20;
+	var block_w = scope.canvas.width / width;
+	var block_h = scope.canvas.height / height;
 
 	function drawBlock( x, y){
 		ctx.fillRect(block_w * x, block_h * y, block_w - 1, block_h - 1);
@@ -19,8 +19,8 @@ function Render(){
 		ctx.clearRect(0, 0, scope.canvas.width, scope.canvas.height);
 		ctx.strokeStyle = 'black';
 
-		for (var x = 0; x < 10; ++x) {
-			for (var y = 0; y < 20; ++y) {
+		for (var x = 0; x < width; ++x) {
+			for (var y = 0; y < height; ++y) {
 				if (glass[x][y] == 0){
 					ctx.fillStyle = 'white';
 					drawBlock(x, y);
