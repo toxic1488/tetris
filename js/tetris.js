@@ -43,7 +43,7 @@ function Tetris( render ){
 		setState(STATE.GAMEOVER);
 		clearInterval(game_loop);
 		alert("game Over, score: " + score);
-		controller.detach();
+		//controller.detach();
 	}
 
 
@@ -197,7 +197,7 @@ function Tetris( render ){
 	}
 
 	window.onload = function(){
-		
+
 		document.body.appendChild(render.canvas);
 		document.getElementById("pause").onclick = function(){
 			scope.setPaused(is_paused);
@@ -205,14 +205,16 @@ function Tetris( render ){
 		}
 		document.getElementById("start").onclick = function(){
 			console.log("started");
-			resetGlass();
+			//controller.attach(window);
 			scope.setPaused(true);
 			score = 0;
 			fall_delta = BASIC_FALL_DELTA;
-			createFigure();
-			document.getElementById("score").innerHTML = "Score: " + score.toString();
+			resetGlass();
+			statePlaying();
+			//createFigure();
+			visualScore();
 		}
-		document.getElementById("score").innerHTML = "Score: " + score.toString();
+		visualScore();
 	}
 
 	scope.startGame = function(){
@@ -220,49 +222,45 @@ function Tetris( render ){
 		resetGlass();
 
 		createFigure();
-		console.log(figure_current.form);
 
 		//listeners buttons
 		window.addEventListener( controller.ACTION_ACTIVATED, onActionActivated );
 		//window.addEventListener( controller.ACTION_DEACTIVATED, onActionDeActivated );
 
-
-		function onActionActivated(e) {
-
-			switch ( e.detail.action ){
-				case "rotate":
-					moveFigure(0, 0, 1);
-					break;
-				case "speed-up":
-					current_fall_delta = current_fall_delta / 2;
-					break;
-				case "instant":
-					dropFigure();
-					break;
-			}
-
-			if ( e.detail.devicetype === "swipeble" ){
-				switch ( e.detail.action ){
-					case "left":
-						moveFigure(-1, 0);
-						break;
-					case "right":
-						moveFigure(1, 0);
-						break;
-				}
-			}
-
-		}
-
-		function onActionDeActivated(e) {
-
-		}
 		//game cicle start
-		//if (state == "playing"){
-		//	game_loop = setInterval( gameStep, 40);
-		//}
 		game_loop = setInterval( gameStep, 40);
 	}
+
+	function onActionActivated(e) {
+
+		switch ( e.detail.action ){
+			case "rotate":
+				moveFigure(0, 0, 1);
+				break;
+			case "speed-up":
+				current_fall_delta = current_fall_delta / 2;
+				break;
+			case "instant":
+				dropFigure();
+				break;
+		}
+
+		if ( e.detail.devicetype === "swipeble" ){
+			switch ( e.detail.action ){
+				case "left":
+					moveFigure(-1, 0);
+					break;
+				case "right":
+					moveFigure(1, 0);
+					break;
+			}
+		}
+
+	}
+	// function onActionDeActivated(e) {
+
+	// }
+
 
 	scope.setPaused = function( _paused ){
 		is_paused = (!_paused ? true : false);
@@ -279,14 +277,15 @@ function Tetris( render ){
 	function gameStep(){
 
 		if (!controller.isActionActive("right") || !controller.isActionActive("left")){
-			if(controller.isActionActive("right")){
+			if (controller.isActionActive("right")){
 				moveFigure(1, 0);
 			}
-			if(controller.isActionActive("left")){
+			if (controller.isActionActive("left")){
 				moveFigure(-1, 0);
 			}
 		}
 		
+		//AUTO FALL
 		if (((Date.now() - time) > current_fall_delta) && !scope.isPaused()){
 
 			time = Date.now();
@@ -296,6 +295,7 @@ function Tetris( render ){
 
 		}
 
+		//VISUAL
 		render.drawBoard( glass );
 		render.drawMovingBlock( figure_current );
 	}
@@ -403,8 +403,7 @@ function Tetris( render ){
 					}
 				}
 				score++;
-				console.log("score: ", score);
-				document.getElementById("score").innerHTML = "Score: " + score.toString();
+				visualScore();
 				fall_delta -= 25;
 				console.log("fall_delta :", fall_delta);
 				y++;
@@ -415,9 +414,15 @@ function Tetris( render ){
 	function gameOver(){
 
 		stateGameOver();
+		window.removeEventListener( controller.ACTION_ACTIVATED, onActionActivated );
 
 	}
 
+	function visualScore(){
+
+		document.getElementById("score").innerHTML = "Score: " + scope.getScore().toString();
+	}
+	//function to get rotate figure form
 	function transpose( matrix ){
 
 		var copy = [];
