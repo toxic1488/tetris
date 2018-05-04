@@ -1,4 +1,4 @@
-function Render(width, height){	
+function CreateJSRenderer(width, height){	
 
 	var scope = this;
 
@@ -15,9 +15,16 @@ function Render(width, height){
 	scope.helpcanvas.width = scope.canvas.width;
 
 	var stage = new createjs.Stage(scope.canvas);
+	stage.autoClear = false;
 
-	function drawBlock( x, y){
-		ctx.fillRect(block_w * x, block_h * y, block_w, block_h);
+	function drawBlock( x, y, bitmap){
+
+		stage.addChild(bitmap);
+		bitmap.x = block_w * x;
+		bitmap.y = block_h * y;
+		bitmap.scaleX = block_w/height/2;
+		bitmap.scaleY = block_h/height/2;
+		stage.update();
 	}
 
 	scope.drawClearBoard = function(){
@@ -31,13 +38,14 @@ function Render(width, height){
 	}
 	scope.drawBoard = function( glass ){
 
-		ctx.clearRect(0, 0, scope.canvas.width, scope.canvas.height);
-		ctx.fillStyle = 'gray';
+		// stage.stage.removeAllChildren();
+		// stage.clear();
+		// stage.update();
 
 		for (var x = 0; x < width; ++x) {
 			for (var y = 0; y < height; ++y) {
 				if(glass[x][y] == 1){
-					drawBlock(x, y);
+					drawBlock(x, y, new createjs.Bitmap("img/block_red.png"));
 				}
 			}
 		}
@@ -47,13 +55,12 @@ function Render(width, height){
 	scope.drawMovingBlock = function( figure_current ){
 		
 		var _current_phase = figure_current.form[figure_current.phase];
-		ctx.fillStyle = 'blue';
 
 		for (var i = 0; i < _current_phase.length; i++){
 			for (var j = 0; j < _current_phase[i].length; j++){
 				if (_current_phase[i][j] == 1)
 				{
-					drawBlock(figure_current.x + i, figure_current.y + j);
+					drawBlock(figure_current.x + i, figure_current.y + j, new createjs.Bitmap("img/block_blue.png"));
 				}
 			}
 		}
