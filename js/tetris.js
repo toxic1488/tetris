@@ -144,6 +144,8 @@ function Tetris( params ){
 			}
 		}
 		//reset visual
+		render.drawClearBoard();
+		render.drawClearBoard();
 	}
 	var square = document.createElement('div');
 	window.onload = function(){
@@ -160,8 +162,10 @@ function Tetris( params ){
 		square.style.top = '200px';
 		square.style.width = '100px';
 		square.style.height = '50px';
-
+		render.helpcanvas.style.position = 'absolute';
+		render.helpcanvas.style.left = 0;
 		document.body.appendChild(render.canvas);
+		document.body.appendChild(render.helpcanvas);
 		document.body.appendChild(square);
 		document.getElementById("pause").onclick = function(){
 			scope.setPaused(is_paused);
