@@ -15,11 +15,14 @@ function CreateJSRenderer(width, height){
 	scope.helpcanvas.width = scope.canvas.width;
 
 	var stage = new createjs.Stage(scope.canvas);
+	var container = new createjs.Container();
 	stage.autoClear = false;
 
 	function drawBlock( x, y, bitmap){
 
-		stage.addChild(bitmap);
+		stage.update();
+		stage.addChild(container);
+		container.addChild(bitmap);
 		bitmap.x = block_w * x;
 		bitmap.y = block_h * y;
 		bitmap.scaleX = block_w/height/2;
@@ -38,9 +41,9 @@ function CreateJSRenderer(width, height){
 	}
 	scope.drawBoard = function( glass ){
 
-		// stage.stage.removeAllChildren();
-		// stage.clear();
-		// stage.update();
+		stage.clear();
+		stage.update();
+		container.removeAllChildren();
 
 		for (var x = 0; x < width; ++x) {
 			for (var y = 0; y < height; ++y) {
@@ -53,7 +56,7 @@ function CreateJSRenderer(width, height){
 	} 
 
 	scope.drawMovingBlock = function( figure_current ){
-		
+
 		var _current_phase = figure_current.form[figure_current.phase];
 
 		for (var i = 0; i < _current_phase.length; i++){
