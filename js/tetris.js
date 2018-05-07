@@ -126,7 +126,11 @@ function Tetris( params ){
 				array_of_figures.push(transpose(array_of_figures[j - 1]))
 			}
 
-			figures[i] = array_of_figures;
+			if(!figures[i]) {
+				figures[i] = array_of_figures;
+			}else{
+				figures[Object.keys(figures).length] = array_of_figures;
+			}
 		}
 		console.log("binded figures", figures);
 	}

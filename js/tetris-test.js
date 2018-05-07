@@ -9,7 +9,6 @@ var tetris = new Tetris( {
 		"1,0;1,0;1,1",
 		"0,1;0,1;1,1",
 		"1;1;1;1",
-		"1,1;1,1",
 		"0,1,0;1,1,1"
 	],
 	bind_actions: {
@@ -31,7 +30,7 @@ var tetris = new Tetris( {
 	}
 });
 
-
+tetris.bindFigures(["0,1,0;1,1,1;0,1,0"]);
 tetris.startGame();
 
 // if( tetris.setState(tetris.PAUSED) ){
