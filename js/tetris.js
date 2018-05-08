@@ -11,6 +11,7 @@ function Tetris( params ){
 	var glass = [];
 	var is_paused = false;
 	var figure_current;
+	var next_figure_form;//for preview
 	var fall_delta = BASIC_FALL_DELTA;
 	var current_fall_delta;
 	var score = 0;
@@ -166,10 +167,17 @@ function Tetris( params ){
 		square.style.top = '200px';
 		square.style.width = '100px';
 		square.style.height = '50px';
+		//canvas for board settingt
 		render.helpcanvas.style.position = 'absolute';
 		render.helpcanvas.style.left = 0;
+		//score canvas settings
+		render.score_canvas.style.position = 'absolute';
+		render.score_canvas.style.left = render.canvas.width*1.2 + 'px';
+		render.score_canvas.style.top = render.canvas.height/3 + 'px';
+		//append all
 		document.body.appendChild(render.canvas);
 		document.body.appendChild(render.helpcanvas);
+		document.body.appendChild(render.score_canvas);
 		document.body.appendChild(square);
 		document.getElementById("pause").onclick = function(){
 			scope.setPaused(is_paused);
@@ -272,6 +280,7 @@ function Tetris( params ){
 		//VISUAL
 		render.drawBoard( glass );
 		render.drawMovingBlock( figure_current );
+		render.drawNextBlock(next_figure_form[1]);
 	}
 
 	function createFigure(){
@@ -281,7 +290,7 @@ function Tetris( params ){
 		var keys = Object.keys(figures);
 		//Choose random figure
 		figure_current = {
-			form : figures[keys[Math.floor( Math.random() * keys.length)]],
+			form : next_figure_form || figures[keys[Math.floor( Math.random() * keys.length)]],
 			//set start coordinates
 			x : Math.floor(GLASS_WIDTH / 2) - 1,
 			y : -1 ,
@@ -293,7 +302,10 @@ function Tetris( params ){
   
 		if ( !moveFigure(0, 0) ){
 			gameOver();
-		}  
+		}
+
+		next_figure_form = figures[keys[Math.floor( Math.random() * keys.length)]];
+		console.log("next:", next_figure_form[2]);
 
 	}
  
