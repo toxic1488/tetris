@@ -25,6 +25,10 @@ function CreateJSRenderer(width, height, block_width){
 	var container = new createjs.Container();
 	stage.autoClear = false;
 
+	var ASSET_MANAGER = new AssetManager();
+	ASSET_MANAGER.queueDownload("img/block_blue.png");
+	//var _blue = ASSET_MANAGER.getAsset(0);
+
 	function drawBlock( x, y, bitmap){
 
 		stage.addChild(container);
@@ -70,13 +74,16 @@ function CreateJSRenderer(width, height, block_width){
 
 	scope.drawMovingBlock = function( figure_current ){
 
+		var id = 0;
 		var _current_phase = figure_current.form[figure_current.phase];
 
 		for (var i = 0; i < _current_phase.length; i++){
 			for (var j = 0; j < _current_phase[i].length; j++){
 				if (_current_phase[i][j] == 1)
 				{
-					drawBlock(figure_current.x + i, figure_current.y + j, new createjs.Bitmap("img/block_blue.png"));
+					//console.log(ASSET_MANAGER.getAsset(i*j).id);
+					drawBlock(figure_current.x + i, figure_current.y + j, ASSET_MANAGER.getAsset(id).img);
+					id++;
 				}
 			}
 		}

@@ -121,11 +121,7 @@ function Tetris( params ){
 				array_of_figures.push(transpose(array_of_figures[j - 1]))
 			}
 
-			if(!figures[i]) {
-				figures[i] = array_of_figures;
-			}else{
-				figures[Object.keys(figures).length] = array_of_figures;
-			}
+			figures[i] = array_of_figures;
 		}
 		console.log("binded figures", figures);
 	}
@@ -380,7 +376,7 @@ function Tetris( params ){
 			if (check) {
 
 				for (var yy = y; yy > 0; yy--) {
-					for (var x = 0; x < GLASS_WIDTH - 1; x++) {
+					for (var x = 0; x < GLASS_WIDTH; x++) {
 						glass[x][yy] = glass[x][yy - 1];		
 					}
 				}

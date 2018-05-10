@@ -5,6 +5,7 @@ var tetris = new Tetris( {
 	block_width: 20,
 	fall_delta: 700,
 	figures: [
+		"0,1,0;1,1,1;0,1,0",
 		"1,1,0;0,1,1",
 		"0,1,1;1,1,0",
 		"1,0;1,0;1,1",
@@ -12,27 +13,27 @@ var tetris = new Tetris( {
 		"1;1;1;1",
 		"1,1;1,1",
 		"0,1,0;1,1,1"
-	],
-	bind_actions: {
-		"left":{
-			keys: [37]
-		},
-		"instant":{
-			keys: [32]
-		},
-		"right":{
-			keys: [39]
-		},
-		"rotate":{
-			keys: [38]
-		},
-		"speed-up":{
-			keys: [40]
-		}
-	}
+	]//,
+	// bind_actions: {
+	// 	"left":{
+	// 		keys: [37]
+	// 	},
+	// 	"instant":{
+	// 		keys: [32]
+	// 	},
+	// 	"right":{
+	// 		keys: [39]
+	// 	},
+	// 	"rotate":{
+	// 		keys: [38]
+	// 	},
+	// 	"speed-up":{
+	// 		keys: [40]
+	// 	}
+	// }
 });
 
-tetris.bindFigures(["0,1,0;1,1,1;0,1,0"]);
+//tetris.bindFigures(["0,1,0;1,1,1;0,1,0"]);
 tetris.startGame();
 
 // if( tetris.setState(tetris.PAUSED) ){
