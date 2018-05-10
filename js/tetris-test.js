@@ -2,6 +2,7 @@ var tetris = new Tetris( {
 	renderer: CreateJSRenderer,
 	glass_width: 10,
 	glass_height: 20,
+	block_width: 20,
 	fall_delta: 700,
 	figures: [
 		"1,1,0;0,1,1",
@@ -9,6 +10,7 @@ var tetris = new Tetris( {
 		"1,0;1,0;1,1",
 		"0,1;0,1;1,1",
 		"1;1;1;1",
+		"1,1;1,1",
 		"0,1,0;1,1,1"
 	],
 	bind_actions: {

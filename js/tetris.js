@@ -5,6 +5,7 @@ function Tetris( params ){
 	var render_class = params.renderer;
 	var GLASS_WIDTH = params.glass_width || 10;//columns
 	var GLASS_HEIGHT = params.glass_height || 20;//rows
+	var BLOCK_WIDTH = params.block_width || 20;
 	var BASIC_FALL_DELTA = params.fall_delta || 700;
 	var figures_to_bind = params.figures;
 
@@ -102,15 +103,8 @@ function Tetris( params ){
 		touch: true
 	});
 
-/*
-██████╗ ███████╗███╗   ██╗██████╗ ███████╗██████╗ ██╗███╗   ██╗ ██████╗ 
-██╔══██╗██╔════╝████╗  ██║██╔══██╗██╔════╝██╔══██╗██║████╗  ██║██╔════╝ 
-██████╔╝█████╗  ██╔██╗ ██║██║  ██║█████╗  ██████╔╝██║██╔██╗ ██║██║  ███╗
-██╔══██╗██╔══╝  ██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗██║██║╚██╗██║██║   ██║
-██║  ██║███████╗██║ ╚████║██████╔╝███████╗██║  ██║██║██║ ╚████║╚██████╔╝
-╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
-*/
-	var render = new render_class( GLASS_WIDTH, GLASS_HEIGHT);
+	//RENDERING
+	var render = new render_class( GLASS_WIDTH, GLASS_HEIGHT, BLOCK_WIDTH);
 
 	scope.bindFigures = function( figures_to_bind ){
 
@@ -167,16 +161,19 @@ function Tetris( params ){
 		square.style.top = '200px';
 		square.style.width = '100px';
 		square.style.height = '50px';
-		//canvas for board settingt
+
+		//canvas for board settings
 		render.helpcanvas.style.position = 'absolute';
 		render.helpcanvas.style.left = 0;
+
 		//score canvas settings
 		render.score_canvas.style.position = 'absolute';
 		render.score_canvas.style.left = render.canvas.width*1.2 + 'px';
 		render.score_canvas.style.top = render.canvas.height/3 + 'px';
+
 		//append all
-		document.body.appendChild(render.canvas);
 		document.body.appendChild(render.helpcanvas);
+		document.body.appendChild(render.canvas);
 		document.body.appendChild(render.score_canvas);
 		document.body.appendChild(square);
 		document.getElementById("pause").onclick = function(){
@@ -184,6 +181,7 @@ function Tetris( params ){
 			console.log("pause:", is_paused);
 		}
 		document.getElementById("start").onclick = function(){
+
 			square.style.display = 'none';
 			console.log("started");
 			//controller.attach(window);
@@ -193,7 +191,6 @@ function Tetris( params ){
 			resetGlass();
 			clearInterval(game_loop);
 			statePlaying();
-			//createFigure();
 			visualScore();
 		}
 		visualScore();
@@ -305,7 +302,6 @@ function Tetris( params ){
 		}
 
 		next_figure_form = figures[keys[Math.floor( Math.random() * keys.length)]];
-		console.log("next:", next_figure_form[2]);
 
 	}
  

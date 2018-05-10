@@ -1,10 +1,10 @@
-function CreateJSRenderer(width, height){	
+function CreateJSRenderer(width, height, block_width){	
 
 	var scope = this;
 
 	scope.canvas = document.createElement('canvas');
-	scope.canvas.height = 400;
-	scope.canvas.width = 200;
+	scope.canvas.height = height*block_width;
+	scope.canvas.width = width*block_width;
 	var block_w = scope.canvas.width / width;
 	var block_h = scope.canvas.height / height;
 	//second canvas for board
@@ -15,8 +15,8 @@ function CreateJSRenderer(width, height){
 
 	//canvas for next figure preview
 	scope.score_canvas = document.createElement('canvas');
-	scope.score_canvas.height = 100;
-	scope.score_canvas.width = 100;
+	scope.score_canvas.height = height*5;
+	scope.score_canvas.width = width*10;
 	var score_stage = new createjs.Stage(scope.score_canvas);
 	var score_container = new createjs.Container();
 	score_stage.autoClear = false;
@@ -65,6 +65,7 @@ function CreateJSRenderer(width, height){
 			}
 		}
 
+		//console.log(container);
 	} 
 
 	scope.drawMovingBlock = function( figure_current ){
