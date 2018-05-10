@@ -3,23 +3,26 @@ function AssetManager() {
 	// this.successCount = 0;
 	// this.errorCount = 0;
 	this.cache = {};
-	this.downloadQueue = [];
+	//this.download = [];
 }
 
-AssetManager.prototype.queueDownload = function(path) {
+AssetManager.prototype.queueDownload = function(path, quantity) {
 
-	this.downloadQueue.push(path);
+	//this.download.push(path);
 	//var that = this;
-	for (var i = 0; i < 5; i++) {
-		this.cache[i] = {
+	length = Object.keys(this.cache).length;
+	this.cache[length]={};
+	console.log(length);
+	for (var i = 0; i < quantity; i++) {
+		this.cache[length][i] = {
 			path: path,
 			img: new createjs.Bitmap(path)
 		}
 	}
 }
 
-AssetManager.prototype.getAsset = function(id) {
-	return this.cache[id];
+AssetManager.prototype.getAsset = function(id, number) {
+	return this.cache[id][number].img;
 }
 
 // AssetManager.prototype.downloadAll = function() {

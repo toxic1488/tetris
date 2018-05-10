@@ -26,8 +26,12 @@ function CreateJSRenderer(width, height, block_width){
 	stage.autoClear = false;
 
 	var ASSET_MANAGER = new AssetManager();
-	ASSET_MANAGER.queueDownload("img/block_blue.png");
-	//var _blue = ASSET_MANAGER.getAsset(0);
+	//id = 0
+	ASSET_MANAGER.queueDownload("img/block_blue.png", 5);
+	//id = 1
+	ASSET_MANAGER.queueDownload("img/block_red.png", (width - 1) * (height - 1));
+	//id = 2
+	ASSET_MANAGER.queueDownload("img/block_yellow.png", 5);
 
 	function drawBlock( x, y, bitmap){
 
@@ -60,11 +64,13 @@ function CreateJSRenderer(width, height, block_width){
 		score_stage.update();
 		score_container.removeAllChildren();
 
+		var number = 0;
 
 		for (var x = 0; x < width; ++x) {
 			for (var y = 0; y < height; ++y) {
 				if(glass[x][y] == 1){
-					drawBlock(x, y, new createjs.Bitmap("img/block_red.png"));
+					drawBlock(x, y, ASSET_MANAGER.getAsset(1, number));
+					number++;
 				}
 			}
 		}
@@ -74,7 +80,7 @@ function CreateJSRenderer(width, height, block_width){
 
 	scope.drawMovingBlock = function( figure_current ){
 
-		var id = 0;
+		var number = 0;
 		var _current_phase = figure_current.form[figure_current.phase];
 
 		for (var i = 0; i < _current_phase.length; i++){
@@ -82,8 +88,8 @@ function CreateJSRenderer(width, height, block_width){
 				if (_current_phase[i][j] == 1)
 				{
 					//console.log(ASSET_MANAGER.getAsset(i*j).id);
-					drawBlock(figure_current.x + i, figure_current.y + j, ASSET_MANAGER.getAsset(id).img);
-					id++;
+					drawBlock(figure_current.x + i, figure_current.y + j, ASSET_MANAGER.getAsset(0, number));
+					number++;
 				}
 			}
 		}
@@ -91,17 +97,19 @@ function CreateJSRenderer(width, height, block_width){
 
 	scope.drawNextBlock = function( next_figure_form ){
 
+		var number = 0;
 		for (var i = 0; i < next_figure_form.length; i++){
 			for (var j = 0; j < next_figure_form[i].length; j++){
 				if (next_figure_form[i][j] == 1)
 				{
-					bitmap = new createjs.Bitmap("img/block_yellow.png");
+					bitmap = ASSET_MANAGER.getAsset(2, number);
 					score_stage.addChild(score_container);
 					score_container.addChild(bitmap);
 					bitmap.x = block_w * i;
 					bitmap.y = block_h * j;
 					bitmap.scaleX = block_w/height/2;
 					bitmap.scaleY = block_h/height/2;
+					number++;
 				}
 			}
 		}
