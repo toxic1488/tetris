@@ -1,4 +1,4 @@
-function CreateJSRenderer(width, height, block_width){	
+function CreateJSRenderer(width, height, block_width, target){	
 
 	var scope = this;
 
@@ -8,20 +8,18 @@ function CreateJSRenderer(width, height, block_width){
 	var block_h = glass_height / height;
 
 	//second canvas for board
-	var helpcanvas = scope.helpcanvas = document.createElement('canvas');
+	var helpcanvas = document.createElement('canvas');
 	var helpctx = helpcanvas.getContext('2d');
-	// helpcanvas.style.zIndex = '0';
 	helpcanvas.width = glass_width;
 	helpcanvas.height = glass_height;
 
 	//
-	var canvas = scope.canvas = document.createElement('canvas');
+	var canvas = document.createElement('canvas');
 	canvas.width = glass_width;
 	canvas.height = glass_height;
-	// canvas.style.zIndex = '1';
 	
 	//canvas for next figure preview
-	var score_canvas = scope.score_canvas = document.createElement('canvas');
+	var score_canvas = document.createElement('canvas');
 	score_canvas.height = height*5;
 	score_canvas.width = width*10;
 	var score_stage = new createjs.Stage(score_canvas);
@@ -158,5 +156,53 @@ function CreateJSRenderer(width, height, block_width){
 			asset_manager.putAsset(yellow_sprite[i]);
 		}
 	}
+
+	target.onload= function(){
+
+		//SQUARE FOR SCORE
+		var square = document.createElement('div');
+		square.style.display = 'none';
+		square.style.background = 'white';
+		square.style.borderRadius = '20px';
+		square.style.position = 'absolute';
+		square.style.left = '60px';
+		square.style.top = '200px';
+		square.style.width = '100px';
+		square.style.height = '50px';
+		square.id = 'square';
+
+		canvas.style.position = 'absolute';
+
+		//canvas for board settings
+		helpcanvas.style.position = 'absolute';
+
+		//score canvas settings
+		score_canvas.style.position = 'absolute';
+		score_canvas.style.left = canvas.width*1.2 + 'px';
+		score_canvas.style.top = canvas.height/3 + 'px';
+
+		//append all
+		document.body.appendChild(helpcanvas);
+		document.body.appendChild(canvas);
+		document.body.appendChild(score_canvas);
+		document.body.appendChild(square);
+		//pause button
+		pause.onclick = function(){
+			tetris.setPaused(tetris.isPaused());
+			console.log("paused:", tetris.isPaused());
+		}
+
+		//restart button
+		start.onclick = function(){
+
+			square.style.display = 'none';
+			console.log("started");
+			tetris.setPaused(true);
+			tetris.startGame();
+		}
+		//VISUAL Score
+		score.innerHTML = "Score: " + tetris.getScore().toString();
+	}
+
 	return scope;
 }

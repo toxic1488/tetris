@@ -78,56 +78,52 @@ function Render(width, height, block_width, target){
 	}
 
 	//scope.load = function(){
-		target.onload= function(){
-			console.log('1111111');
-			//SQUARE FOR SCORE
-			var square = document.createElement('div');
-			square.style.display = 'none';
-			square.style.background = 'white';
-			square.style.borderRadius = '20px';
-			// square.style.borderColor = "red";
-			// square.style.borderWidth = "thick";
-			square.style.position = 'absolute';
-			square.style.left = '60px';
-			square.style.top = '200px';
-			square.style.width = '100px';
-			square.style.height = '50px';
-			square.id = 'square';
+	target.onload= function(){
 
-			canvas.style.position = 'absolute';
+		//SQUARE FOR SCORE
+		var square = document.createElement('div');
+		square.style.display = 'none';
+		square.style.background = 'white';
+		square.style.borderRadius = '20px';
+		square.style.position = 'absolute';
+		square.style.left = '60px';
+		square.style.top = '200px';
+		square.style.width = '100px';
+		square.style.height = '50px';
+		square.id = 'square';
 
-			//canvas for board settings
-			helpcanvas.style.position = 'absolute';
+		canvas.style.position = 'absolute';
 
+		//canvas for board settings
+		helpcanvas.style.position = 'absolute';
 
-			//score canvas settings
-			score_canvas.style.position = 'absolute';
-			score_canvas.style.left = canvas.width*1.2 + 'px';
-			// console.log(render.score_canvas.style.left);
-			score_canvas.style.top = canvas.height/3 + 'px';
+		//score canvas settings
+		score_canvas.style.position = 'absolute';
+		score_canvas.style.left = canvas.width*1.2 + 'px';
+		score_canvas.style.top = canvas.height/3 + 'px';
 
-			//append all
-			document.body.appendChild(square);
-			document.body.appendChild(helpcanvas);
-			document.body.appendChild(canvas);
-			document.body.appendChild(score_canvas);
-			document.body.appendChild(square);
-			//pause button
-			pause.onclick = function(){
-				tetris.setPaused(tetris.isPaused());
-				console.log("paused:", tetris.isPaused());
-			}
-
-			//restart button
-			start.onclick = function(){
-
-				square.style.display = 'none';
-				console.log("started");
-				tetris.setPaused(true);
-				tetris.startGame();
-			}
-			score.innerHTML = "Score: " + tetris.getScore().toString();
+		//append all
+		document.body.appendChild(helpcanvas);
+		document.body.appendChild(canvas);
+		document.body.appendChild(score_canvas);
+		document.body.appendChild(square);
+		//pause button
+		pause.onclick = function(){
+			tetris.setPaused(tetris.isPaused());
+			console.log("paused:", tetris.isPaused());
 		}
-	//}
+
+		//restart button
+		start.onclick = function(){
+
+			square.style.display = 'none';
+			console.log("started");
+			tetris.setPaused(true);
+			tetris.startGame();
+		}
+		//VISUAL Score
+		score.innerHTML = "Score: " + tetris.getScore().toString();
+	}
+	
 	return scope;
 }
