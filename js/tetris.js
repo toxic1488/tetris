@@ -141,7 +141,9 @@ function Tetris( params ){
 		//reset visual
 		render.drawClearBoard();
 		render.drawClearBoard();
+
 	}
+
 	var square = document.createElement('div');
 	window.onload = function(){
 
@@ -161,6 +163,8 @@ function Tetris( params ){
 		//canvas for board settings
 		render.helpcanvas.style.position = 'absolute';
 		render.helpcanvas.style.left = 0;
+		//render.canvas.style.zIndex = 1;
+		console.log(render.canvas.style);
 
 		//score canvas settings
 		render.score_canvas.style.position = 'absolute';
@@ -353,6 +357,9 @@ function Tetris( params ){
 				if (_form[i][j])
 				{
 					glass[i + figure_current.x][j + figure_current.y] = parseInt(_form[i][j])||glass[i + figure_current.x][j + figure_current.y];
+					if (j + figure_current.y == 0) {
+						gameOver();
+					}
 				}
 			}
 		}

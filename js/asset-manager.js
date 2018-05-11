@@ -12,7 +12,6 @@ AssetManager.prototype.queueDownload = function(path, quantity) {
 	//var that = this;
 	length = Object.keys(this.cache).length;
 	this.cache[length]={};
-	console.log(length);
 	for (var i = 0; i < quantity; i++) {
 		this.cache[length][i] = {
 			path: path,
