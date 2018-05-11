@@ -160,15 +160,19 @@ function Tetris( params ){
 		square.style.width = '100px';
 		square.style.height = '50px';
 
+		render.canvas.style.position = 'absolute';
+		// render.canvas.style.opacity = .999;
+
 		//canvas for board settings
 		render.helpcanvas.style.position = 'absolute';
-		render.helpcanvas.style.left = 0;
+		// render.helpcanvas.style.left = 0;
 		//render.canvas.style.zIndex = 1;
-		console.log(render.canvas.style);
+		//console.log(render.canvas.style);
 
 		//score canvas settings
 		render.score_canvas.style.position = 'absolute';
 		render.score_canvas.style.left = render.canvas.width*1.2 + 'px';
+		//console.log(render.score_canvas.style.left);
 		render.score_canvas.style.top = render.canvas.height/3 + 'px';
 
 		//append all

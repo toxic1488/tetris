@@ -1,61 +1,85 @@
-function AssetManager() {
 
-	// this.successCount = 0;
-	// this.errorCount = 0;
-	this.cache = {};
-	//this.download = [];
-}
+function AssetManager(){
 
-AssetManager.prototype.queueDownload = function(path, quantity) {
+	var scope = this;
+	var assets = {};
 
-	//this.download.push(path);
-	//var that = this;
-	length = Object.keys(this.cache).length;
-	this.cache[length]={};
-	for (var i = 0; i < quantity; i++) {
-		this.cache[length][i] = {
-			path: path,
-			img: new createjs.Bitmap(path)
+	scope.addAsset = function( asset_id, createAsset, count ){
+
+		var asset_object = assets[asset_id] = {
+			asset_id: asset_id,
+			assets: [],
+			createAsset: createAsset
+		};
+		
+		count = count || 1;
+		for (var i = 0; i < count; i++) {
+			asset_object.assets.push( _createAsset( asset_object ) );
+		}
+		console.log(asset_object, asset_object.assets);
+	}
+
+	scope.pullAsset = function( asset_id ){
+		
+		var asset_object = assets[asset_id];
+		//console.log(asset_object);
+		if( !asset_object ) {
+			console.warn("there's no such asset: ", asset_id );
+			return;
+		}
+
+		var asset = asset_object.assets.pop();
+
+		// console.log(asset_object, asset_object.assets);
+		if( asset ) return asset;
+		else{
+			return _createAsset( asset_object );
 		}
 	}
+
+	scope.putAsset = function( asset ){
+
+		var asset_object = assets[asset._asset_id_];
+		if( !asset_object ) {
+			console.warn("there's no such asset: ", asset_id );
+			return;
+		}
+
+		asset_object.assets.push( asset );
+	}
+
+	// PRIVATE
+	function _createAsset( asset_object ){
+		var asset = asset_object.createAsset();
+		asset._asset_id_ = asset_object.asset_id;
+		return asset;
+		//console.log(asset);
+
+	}
+
+	//
+	return scope;
+
 }
 
-AssetManager.prototype.getAsset = function(id, number) {
-	return this.cache[id][number].img;
-}
 
-// AssetManager.prototype.downloadAll = function() {
 
-// 	// if (this.downloadQueue.length === 0) {
-// 	// 	downloadCallback();
-// 	// }
 
-// 	for (var i = 0; i < this.downloadQueue.length; i++) {
+// ---------------------------
+// USAGE
+// ---------------------------
 
-// 		var path = this.downloadQueue[i];
-// 		var img = new createjs.Bitmap(path);
-// 		var that = this;
-// 		// //success load listener
-// 		// img.addEventListener("load", function() {
-// 		// 	that.successCount += 1;
-// 		// 	if (that.isDone()) {
-// 		// 		downloadCallback();
-// 		// 	}
-// 		// }, false);
-// 		// //error listener
-// 		// img.addEventListener("error", function() {
-// 		// 	that.errorCount += 1;
-// 		// 	if (that.isDone()) {
-// 		// 		downloadCallback();
-// 		// 	}
-// 		// }, false);
+// var asset_manager = new AssetManager();
 
-// 		//img.src = path;
-// 		this.cache[path] = img;
-// 	return img;
-// 	}
-// }
+// asset_manager.addAsset(
+// 	'red_square',
+// 	function(){
+// 		// return new createjs.Bitmap('red.png');
+// 		return {name:"red"};
+// 	},
+// 	10
+// );
 
-// AssetManager.prototype.isDone = function() {
-// 	return (this.downloadQueue.length == this.successCount + this.errorCount);
-// }
+// var red_sprite = asset_manager.pullAsset( 'red_square' );
+
+// asset_manager.putAsset( red_sprite );
