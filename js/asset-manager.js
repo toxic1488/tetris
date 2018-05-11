@@ -30,7 +30,7 @@ function AssetManager(){
 
 		var asset = asset_object.assets.pop();
 
-		console.log(asset_object, asset_object.assets);
+		if(asset_object.asset_id == "red_square") console.log(asset_object.assets.length);
 		if( asset ) return asset;
 		else{
 			return _createAsset( asset_object );

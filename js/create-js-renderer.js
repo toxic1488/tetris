@@ -38,7 +38,7 @@ function CreateJSRenderer(width, height, block_width, target){
 		function(){
 			return new createjs.Bitmap('img/block_blue.png');
 		},
-		10
+		5
 	);
 
 	asset_manager.addAsset(
@@ -53,7 +53,7 @@ function CreateJSRenderer(width, height, block_width, target){
 		function(){
 			return new createjs.Bitmap('img/block_yellow.png');
 		},
-		10
+		5
 	);
 	//console.log(blue_sprite);
 
@@ -88,9 +88,6 @@ function CreateJSRenderer(width, height, block_width, target){
 		current_container.removeAllChildren();
 
 		//clear score_canvas
-		score_stage.clear();
-		score_stage.update();
-		score_container.removeAllChildren();
 
 		var red_sprite = [];
 		var number = 0;
@@ -104,6 +101,7 @@ function CreateJSRenderer(width, height, block_width, target){
 				}
 			}
 		}
+		// console.log(red_sprite, number);
 		for (var i = number - 1; i >= 0; i--) {
 			asset_manager.putAsset(red_sprite[i]);
 		}
@@ -136,6 +134,9 @@ function CreateJSRenderer(width, height, block_width, target){
 
 	scope.drawNextBlock = function( next_figure_form ){
 
+		score_stage.clear();
+		score_stage.update();
+		score_container.removeAllChildren();
 		var yellow_sprite = [];
 		var number = 0;
 
@@ -157,6 +158,7 @@ function CreateJSRenderer(width, height, block_width, target){
 		}
 	}
 
+	//ONLOAD VISUAL
 	target.onload= function(){
 
 		//SQUARE FOR SCORE

@@ -150,6 +150,8 @@ function Tetris( params ){
 		createFigure();
 
 		//listeners buttons
+		clearInterval(game_loop);
+		// window.removeEventListener( controller.ACTION_ACTIVATED, onActionActivated );
 		window.addEventListener( controller.ACTION_ACTIVATED, onActionActivated );
 		//window.addEventListener( controller.ACTION_DEACTIVATED, onActionDeActivated );
 
@@ -200,6 +202,7 @@ function Tetris( params ){
 		return score;
 	}
 
+	//PRIVATE
 	function gameStep(){
 
 		if (!controller.isActionActive("right") || !controller.isActionActive("left")){
