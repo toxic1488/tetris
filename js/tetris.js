@@ -104,8 +104,7 @@ function Tetris( params ){
 	});
 
 	//RENDERING
-	var render = new render_class( GLASS_WIDTH, GLASS_HEIGHT, BLOCK_WIDTH);
-
+	var render = new render_class( GLASS_WIDTH, GLASS_HEIGHT, BLOCK_WIDTH, window);
 	scope.bindFigures = function( figures_to_bind ){
 
 		for (var i = 0; i < figures_to_bind.length; i++){
@@ -142,62 +141,6 @@ function Tetris( params ){
 		render.drawClearBoard();
 		render.drawClearBoard();
 
-	}
-
-	var square = document.createElement('div');
-	window.onload = function(){
-
-
-		//SQUARE FOR SCORE
-		square.style.display = 'none';
-		square.style.background = 'white';
-		square.style.borderRadius = '20px';
-		// square.style.borderColor = "red";
-		// square.style.borderWidth = "thick";
-		square.style.position = 'absolute';
-		square.style.left = '60px';
-		square.style.top = '200px';
-		square.style.width = '100px';
-		square.style.height = '50px';
-
-		render.canvas.style.position = 'absolute';
-		// render.canvas.style.opacity = .999;
-
-		//canvas for board settings
-		render.helpcanvas.style.position = 'absolute';
-		// render.helpcanvas.style.left = 0;
-		//render.canvas.style.zIndex = 1;
-		//console.log(render.canvas.style);
-
-		//score canvas settings
-		render.score_canvas.style.position = 'absolute';
-		render.score_canvas.style.left = render.canvas.width*1.2 + 'px';
-		//console.log(render.score_canvas.style.left);
-		render.score_canvas.style.top = render.canvas.height/3 + 'px';
-
-		//append all
-		document.body.appendChild(render.helpcanvas);
-		document.body.appendChild(render.canvas);
-		document.body.appendChild(render.score_canvas);
-		document.body.appendChild(square);
-		document.getElementById("pause").onclick = function(){
-			scope.setPaused(is_paused);
-			console.log("pause:", is_paused);
-		}
-		document.getElementById("start").onclick = function(){
-
-			square.style.display = 'none';
-			console.log("started");
-			//controller.attach(window);
-			scope.setPaused(true);
-			score = 0;
-			fall_delta = BASIC_FALL_DELTA;
-			resetGlass();
-			clearInterval(game_loop);
-			statePlaying();
-			visualScore();
-		}
-		visualScore();
 	}
 
 	scope.startGame = function(){
@@ -403,8 +346,10 @@ function Tetris( params ){
 	function gameOver(){
 
 		stateGameOver();
-		square.style.display = 'block';
-		square.innerHTML = "Game Over\n Score: " + scope.getScore().toString();
+		console.log(document);
+		
+		document.getElementById("square").style.display = 'block';
+		document.getElementById("square").innerHTML = "Game Over\n Score: " + scope.getScore().toString();
 		window.removeEventListener( controller.ACTION_ACTIVATED, onActionActivated );
 
 	}

@@ -94,17 +94,22 @@ function CreateJSRenderer(width, height, block_width){
 		score_stage.update();
 		score_container.removeAllChildren();
 
+		var red_sprite = [];
+		var number = 0;
 		for (var x = 0; x < width; ++x) {
 			for (var y = 0; y < height; ++y) {
 				if(glass[x][y] == 1){
-					var red_sprite = asset_manager.pullAsset( 'red_square' );
-					drawBlock(x, y, red_sprite, stage, glass_container);
+					red_sprite[number] = asset_manager.pullAsset( 'red_square' );
+					drawBlock(x, y, red_sprite[number], stage, glass_container);
+					number++;
 					// + Math.floor(Math.random()*2
 				}
 			}
 		}
+		for (var i = number - 1; i >= 0; i--) {
+			asset_manager.putAsset(red_sprite[i]);
+		}
 
-		//console.log(container);
 	} 
 
 	scope.drawMovingBlock = function( figure_current ){
@@ -113,23 +118,27 @@ function CreateJSRenderer(width, height, block_width){
 
 		// length = Object.keys(ASSET_MANAGER.cache).length
 		// id = 1 + Math.floor(Math.random() * (length - 1));
-		var blue_sprite;
-
+		var blue_sprite = [];
+		var number = 0;
 		for (var i = 0; i < _current_phase.length; i++){
 			for (var j = 0; j < _current_phase[i].length; j++){
 				if (_current_phase[i][j] == 1)
 				{
-					blue_sprite = asset_manager.pullAsset( 'blue_square' );
-					console.log(blue_sprite._asset_id_);
-					drawBlock(figure_current.x + i, figure_current.y + j, blue_sprite, stage, current_container);
+					blue_sprite[number] = asset_manager.pullAsset( 'blue_square' );
+					// console.log(blue_sprite[number]._asset_id_);
+					drawBlock(figure_current.x + i, figure_current.y + j, blue_sprite[number], stage, current_container);
+					number++;
 				}
-					// asset_manager.putAsset(blue_sprite);
 			}
+		}
+		for (var i = number - 1; i >= 0; i--) {
+			asset_manager.putAsset(blue_sprite[i]);
 		}
 	}
 
 	scope.drawNextBlock = function( next_figure_form ){
 
+		var yellow_sprite = [];
 		var number = 0;
 
 		// length = Object.keys(ASSET_MANAGER.cache).length
@@ -139,10 +148,14 @@ function CreateJSRenderer(width, height, block_width){
 			for (var j = 0; j < next_figure_form[i].length; j++){
 				if (next_figure_form[i][j] == 1)
 				{
-					yellow_sprite = asset_manager.pullAsset( 'yellow_square' );
-					drawBlock(i, j, yellow_sprite, score_stage, score_container);
+					yellow_sprite[number] = asset_manager.pullAsset( 'yellow_square' );
+					drawBlock(i, j, yellow_sprite[number], score_stage, score_container);
+					number++;
 				}
 			}
+		}
+		for (var i = number - 1; i >= 0; i--) {
+			asset_manager.putAsset(yellow_sprite[i]);
 		}
 	}
 	return scope;

@@ -1,5 +1,5 @@
 var tetris = new Tetris( {
-	renderer: CreateJSRenderer,
+	renderer: Render,
 	glass_width: 10,
 	glass_height: 20,
 	block_width: 20,

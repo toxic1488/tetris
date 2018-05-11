@@ -1,23 +1,23 @@
-function Render(width, height, block_width){	
+function Render(width, height, block_width, target){	
 
 	var scope = this;
 
-	scope.canvas = document.createElement('canvas');
-	var ctx = scope.canvas.getContext('2d');
-	scope.canvas.height = height*block_width;
-	scope.canvas.width = width*block_width;
-	var block_w = scope.canvas.width / width;
-	var block_h = scope.canvas.height / height;
+	var canvas = document.createElement('canvas');
+	var ctx = canvas.getContext('2d');
+	canvas.height = height*block_width;
+	canvas.width = width*block_width;
+	var block_w = canvas.width / width;
+	var block_h = canvas.height / height;
 	//second canvas for board
-	scope.helpcanvas = document.createElement('canvas');
-	var helpctx = scope.helpcanvas.getContext('2d');
-	scope.helpcanvas.height = scope.canvas.height;
-	scope.helpcanvas.width = scope.canvas.width;
+	var helpcanvas = document.createElement('canvas');
+	var helpctx = helpcanvas.getContext('2d');
+	helpcanvas.height = canvas.height;
+	helpcanvas.width = canvas.width;
 	//canvas for next figure preview
-	scope.score_canvas = document.createElement('canvas');
-	var score_ctx = scope.score_canvas.getContext('2d');
-	scope.score_canvas.height = height*5;
-	scope.score_canvas.width = width*10;
+	var score_canvas = document.createElement('canvas');
+	var score_ctx = score_canvas.getContext('2d');
+	score_canvas.height = height*5;
+	score_canvas.width = width*10;
 
 	function drawBlock( x, y){
 		ctx.fillRect(block_w * x, block_h * y, block_w, block_h);
@@ -34,8 +34,8 @@ function Render(width, height, block_width){
 	}
 	scope.drawBoard = function( glass ){
 
-		ctx.clearRect(0, 0, scope.canvas.width, scope.canvas.height);
-		score_ctx.clearRect(0, 0, scope.score_canvas.width, scope.score_canvas.height);
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		score_ctx.clearRect(0, 0, score_canvas.width, score_canvas.height);
 		ctx.fillStyle = 'gray';
 
 		for (var x = 0; x < width; ++x) {
@@ -77,5 +77,57 @@ function Render(width, height, block_width){
 		}
 	}
 
+	//scope.load = function(){
+		target.onload= function(){
+			console.log('1111111');
+			//SQUARE FOR SCORE
+			var square = document.createElement('div');
+			square.style.display = 'none';
+			square.style.background = 'white';
+			square.style.borderRadius = '20px';
+			// square.style.borderColor = "red";
+			// square.style.borderWidth = "thick";
+			square.style.position = 'absolute';
+			square.style.left = '60px';
+			square.style.top = '200px';
+			square.style.width = '100px';
+			square.style.height = '50px';
+			square.id = 'square';
+
+			canvas.style.position = 'absolute';
+
+			//canvas for board settings
+			helpcanvas.style.position = 'absolute';
+
+
+			//score canvas settings
+			score_canvas.style.position = 'absolute';
+			score_canvas.style.left = canvas.width*1.2 + 'px';
+			// console.log(render.score_canvas.style.left);
+			score_canvas.style.top = canvas.height/3 + 'px';
+
+			//append all
+			document.body.appendChild(square);
+			document.body.appendChild(helpcanvas);
+			document.body.appendChild(canvas);
+			document.body.appendChild(score_canvas);
+			document.body.appendChild(square);
+			//pause button
+			pause.onclick = function(){
+				tetris.setPaused(tetris.isPaused());
+				console.log("paused:", tetris.isPaused());
+			}
+
+			//restart button
+			start.onclick = function(){
+
+				square.style.display = 'none';
+				console.log("started");
+				tetris.setPaused(true);
+				tetris.startGame();
+			}
+			score.innerHTML = "Score: " + tetris.getScore().toString();
+		}
+	//}
 	return scope;
 }

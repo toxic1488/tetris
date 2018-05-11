@@ -30,7 +30,7 @@ function AssetManager(){
 
 		var asset = asset_object.assets.pop();
 
-		// console.log(asset_object, asset_object.assets);
+		console.log(asset_object, asset_object.assets);
 		if( asset ) return asset;
 		else{
 			return _createAsset( asset_object );
